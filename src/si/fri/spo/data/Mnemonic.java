@@ -2,33 +2,34 @@ package si.fri.spo.data;
 
 public class Mnemonic {
 	//private String name; - already implemented in the hash table :]
-	private byte optcode;
-	private byte format;
-	private byte length;
+	private int optcode;
+	private int format;
+	//private byte length;
 	
-	public Mnemonic(byte optcode, byte format, byte length) {
+	public Mnemonic(int optcode, int format) {
 		this.optcode = optcode;
 		this.format = format;
-		this.length = length;
+		//this.length = length;
 	}
 	
-	public byte getOptcode() {
+	public int getOptcode() {
 		return optcode;
 	}
 	public void setOptcode(byte optcode) {
 		this.optcode = optcode;
 	}
-	public byte getFormat() {
+	public int getFormat() {
 		return format;
 	}
 	public void setFormat(byte format) {
 		this.format = format;
 	}
+/*
 	public byte getLength() {
 		return length;
 	}
 	public void setLength(byte length) {
 		this.length = length;
 	}
-	
+*/	
 }
