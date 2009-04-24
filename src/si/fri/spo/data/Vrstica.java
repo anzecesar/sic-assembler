@@ -5,7 +5,12 @@ public class Vrstica {
 	private String mnemonik;
 	private String labela;
 	private String operand;
-	private boolean comment;
+	
+	public boolean hasMnemonik() {
+		if(mnemonik == null)
+			return false;
+		return true;
+	}
 	
 	public String getMnemonik() {
 		return mnemonik;
@@ -25,11 +30,15 @@ public class Vrstica {
 	public void setOperand(String operand) {
 		this.operand = operand;
 	}
-	public boolean isComment() {
-		return comment;
+	
+	public String toString() {
+		String vrstica = "";
+		if(labela != null)
+			vrstica += "(l)" + labela + " ";
+		vrstica += "(m)" + mnemonik + " ";
+		if(operand != null)
+			vrstica += "(o)" + operand;
+			
+		return vrstica;
 	}
-	public void setComment(boolean comment) {
-		this.comment = comment;
-	}
-
 }

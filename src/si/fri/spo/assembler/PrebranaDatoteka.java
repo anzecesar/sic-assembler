@@ -16,4 +16,8 @@ public class PrebranaDatoteka {
 		if(vrstica != null)
 			datoteka.add(vrstica);
 	}
+	
+	public List<Vrstica> getVrstice() {
+		return datoteka;
+	}
 }

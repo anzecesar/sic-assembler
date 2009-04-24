@@ -6,15 +6,15 @@ import java.util.Map;
 import si.fri.spo.data.Mnemonic;
 
 public class MnetabManager {
-	private MnetabManager m_manager;
+	private static MnetabManager m_manager;
 	
 	private Map<String,Mnemonic> mnetab;
 	
 	private MnetabManager() {
-		
+		makeTable();
 	}
 	
-	public MnetabManager getInstance() {
+	public static MnetabManager getInstance() {
 		if(m_manager == null)
 			m_manager = new MnetabManager();
 		return m_manager;
@@ -25,7 +25,7 @@ public class MnetabManager {
 	// format 0, rabi obrazlozitve, ni se implementiran
 	// format 4 je oznacen s +, in ni jemljen kot osnovni
 	// dolzina se izracuna preko formata, tako da ni potrebna
-	public void makeTable() {
+	private void makeTable() {
 		mnetab = new HashMap<String, Mnemonic>();
 		mnetab.put("ADD", new Mnemonic(0x18, 3));
 		mnetab.put("ADDF", new Mnemonic(0x58, 3));
@@ -86,6 +86,9 @@ public class MnetabManager {
 		mnetab.put("TIX", new Mnemonic(0x2c, 3));
 		mnetab.put("TIXR", new Mnemonic(0xb8, 2));
 		mnetab.put("WD", new Mnemonic(0xdc, 3));
-		
+	}
+	
+	public boolean isMnemonik(String mnemonik) {
+		return mnetab.containsKey(mnemonik);
 	}
 }
