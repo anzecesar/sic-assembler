@@ -10,7 +10,7 @@ public class MnetabManager {
 	
 	private Map<String,Mnemonic> mnetab;
 	
-	private MnetabManager() {
+	public MnetabManager() {
 		makeTable();
 	}
 	
@@ -91,4 +91,9 @@ public class MnetabManager {
 	public boolean isMnemonik(String mnemonik) {
 		return mnetab.containsKey(mnemonik);
 	}
+	
+	public int getFormat(String s) {
+		return mnetab.get(s).getFormat();
+		
+	} 
 }
