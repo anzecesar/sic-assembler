@@ -12,7 +12,7 @@ import si.fri.spo.utils.Parser;
 import si.fri.spo.utils.SimtabManager;
 
 public class Assembler {
-	private int zacetniNaslovOP;
+	private int zacetniNaslovOP, stariLokSt;
 
 	private boolean inMemory;
 
@@ -44,6 +44,10 @@ public class Assembler {
 		int operand = 0;
 		if (s.charAt(0) == '#')
 			operand = Integer.parseInt(s.substring(1, s.length() - 1));
+		if (s.charAt(0) == 'C')
+			operand = s.length() - 3; // prvi znak in ''
+		if (Character.isDigit(s.charAt(0)))
+			operand = Integer.parseInt(s, 16);
 		return operand;
 	}
 
@@ -67,7 +71,7 @@ public class Assembler {
 				//System.out.println(stVrstice);
 				dat.dodajVrstico(v);
 				lokSt = pass1(v, lokSt);
-
+				System.out.println(" " + stariLokSt);
 				if (!inMemory) {
 					// TODO: pisi v vmesno datoteko.
 				}
@@ -94,12 +98,11 @@ public class Assembler {
 	}
 
 	private int pass1(Vrstica v, int lokSt) throws NapakaPriPrevajanju {
-		int stariLokSt = 0;
 		SimtabManager simTab = SimtabManager.getInstance();
 		MnetabManager mneTab = MnetabManager.getInstance();
 
 		if ("START".equals(v.getMnemonik())) {
-			zacetniNaslovOP = Integer.parseInt(v.getOperand());
+			zacetniNaslovOP = pretvoriOperand(v.getOperand());
 			return zacetniNaslovOP;
 		}
 
@@ -107,25 +110,27 @@ public class Assembler {
 			String labela = v.getLabela();
 			if (labela != null) {
 				simTab.dodajLabelo(labela, lokSt);
-				stariLokSt = lokSt;
-				String trenutniMnemonik = v.getMnemonik();
-
-				if ("RESW".equals(trenutniMnemonik))
-					lokSt = lokSt + 3 * (pretvoriOperand(v.getOperand()));
-				else if ("RESB".equals(trenutniMnemonik))
-					lokSt = lokSt + 4 * (pretvoriOperand(v.getOperand()));
-				else if ("BYTE".equals(trenutniMnemonik)) {
-					//do something
-				}
-				else if (mneTab.isMnemonik(trenutniMnemonik) == true) {
-					mneTab.getFormat(trenutniMnemonik);
-					lokSt = lokSt + mneTab.getFormat(trenutniMnemonik);
-				} else {
-					// napaka
-					throw new NapakaPriPrevajanju("Napaka: Prebran mnemonik "
-							+ trenutniMnemonik + " ni veljaven mnemonik!");
-				}
 			}
+			stariLokSt = lokSt;
+			String trenutniMnemonik = v.getMnemonik();
+// TODO: preveri vrednosti :) 
+			if ("RESW".equals(trenutniMnemonik))
+				lokSt = lokSt + 3 * (pretvoriOperand(v.getOperand()));
+			else if ("RESB".equals(trenutniMnemonik))
+				lokSt = lokSt + 4 * (pretvoriOperand(v.getOperand()));
+			else if ("BYTE".equals(trenutniMnemonik))
+				lokSt = lokSt + 4 * (pretvoriOperand(v.getOperand()));
+			else if ("WORD".equals(trenutniMnemonik)) 
+				lokSt = lokSt + 3 * (pretvoriOperand(v.getOperand()));
+			else if (mneTab.isMnemonik(trenutniMnemonik) == true) {
+				mneTab.getFormat(trenutniMnemonik);
+				lokSt = lokSt + mneTab.getFormat(trenutniMnemonik);
+			} else {
+				// napaka
+				throw new NapakaPriPrevajanju("Napaka: Prebran mnemonik "
+						+ trenutniMnemonik + " ni veljaven mnemonik!");
+			}
+
 		}
 
 		return lokSt;
