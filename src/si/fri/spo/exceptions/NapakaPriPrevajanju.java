@@ -15,6 +15,10 @@ public class NapakaPriPrevajanju extends Exception {
 		this.vzrok = e;
 		this.message = message;
 	}
+	
+	public NapakaPriPrevajanju(String message) {
+		this.message = message;
+	}
 
 	public Throwable getCause() {
 		return vzrok;

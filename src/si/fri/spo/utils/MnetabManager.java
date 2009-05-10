@@ -10,7 +10,7 @@ public class MnetabManager {
 	
 	private Map<String,Mnemonic> mnetab;
 	
-	public MnetabManager() {
+	private MnetabManager() {
 		makeTable();
 	}
 	
