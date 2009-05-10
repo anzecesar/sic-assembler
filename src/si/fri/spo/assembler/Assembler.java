@@ -64,7 +64,8 @@ public class Assembler {
 				if (v == null)
 					continue;
 
-				System.out.println(stVrstice);
+				//System.out.println(stVrstice);
+				dat.dodajVrstico(v);
 				lokSt = pass1(v, lokSt);
 
 				if (!inMemory) {

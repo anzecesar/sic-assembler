@@ -86,6 +86,17 @@ public class MnetabManager {
 		mnetab.put("TIX", new Mnemonic(0x2c, 3));
 		mnetab.put("TIXR", new Mnemonic(0xb8, 2));
 		mnetab.put("WD", new Mnemonic(0xdc, 3));
+		
+		//Naslednji ukazi so ubistvu zloraba mnetaba :]
+		//Gre za psevdo ukaze in so tu zgolj zaradi prebavljanja
+		//izvorne kode :].
+		mnetab.put("RESW", new Mnemonic(0x0, -1));
+		mnetab.put("RESB", new Mnemonic(0x0, -1));
+		mnetab.put("WORD", new Mnemonic(0x0, -1));
+		mnetab.put("BYTE", new Mnemonic(0x0, -1));
+		mnetab.put("START", new Mnemonic(0x0, -1));
+		mnetab.put("END", new Mnemonic(0x0, -1));
+		
 	}
 	
 	public boolean isMnemonik(String mnemonik) {
