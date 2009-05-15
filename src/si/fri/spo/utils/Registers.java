@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Registers {
-	private Registers m_registers;
+	private static Registers m_registers;
 	
 	private Map<String, Integer> registers;
 	
@@ -23,7 +23,11 @@ public class Registers {
 		registers.put("F", 0x6);
 	}
 	
-	public Registers getInstance() {
+	public int getRegOpCode(String s) {
+		return registers.get(s);
+	}
+	
+	public static Registers getInstance() {
 		if(m_registers == null) {
 			m_registers = new Registers();
 		}
