@@ -5,6 +5,7 @@ public class Vrstica {
 	private String mnemonik;
 	private String labela;
 	private String operand;
+	private int lokSt;
 	
 	public boolean hasMnemonik() {
 		if(mnemonik == null)
@@ -40,5 +41,13 @@ public class Vrstica {
 			vrstica += "(o)" + operand;
 			
 		return vrstica;
+	}
+
+	public int getLokSt() {
+		return lokSt;
+	}
+
+	public void setLokSt(int lokSt) {
+		this.lokSt = lokSt;
 	}
 }
