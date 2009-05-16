@@ -103,6 +103,10 @@ public class MnetabManager {
 		return mnetab.containsKey(mnemonik);
 	}
 	
+	public int getOpCode(String s) {
+		return mnetab.get(s).getOptcode();
+	}
+	
 	public int getFormat(String s) {
 		return mnetab.get(s).getFormat();
 		

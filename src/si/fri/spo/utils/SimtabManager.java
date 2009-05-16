@@ -35,4 +35,15 @@ public class SimtabManager {
 		simTab.put(labela, lokSt);
 	}
 
+	public boolean isLabela(String s) {
+		if(simTab.containsKey(s)) 
+			return true;
+		else 
+			return false;
+	}
+	
+	public int getLokSt(String labela) {
+		return simTab.get(labela);
+	}
+
 }
