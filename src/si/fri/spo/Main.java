@@ -4,7 +4,7 @@ import si.fri.spo.assembler.Assembler;
 import si.fri.spo.exceptions.NapakaPriPrevajanju;
 
 public class Main {
-	private static final String  VERSION = "0.1";
+	private static final String  VERSION = "0.2";
 	
 	//ce je IN_MEMORY enak true, potem ne uporablja vmesne datoteke
 	//vse se hrani v pomnilniku.

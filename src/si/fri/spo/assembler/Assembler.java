@@ -10,6 +10,7 @@ import si.fri.spo.exceptions.NapakaPriPrevajanju;
 import si.fri.spo.utils.MnetabManager;
 import si.fri.spo.utils.Parser;
 import si.fri.spo.utils.SimtabManager;
+import si.fri.spo.utils.VmesnaDatoteka;
 
 public class Assembler {
 	private int zacetniNaslovOP, stariLokSt;
@@ -22,6 +23,15 @@ public class Assembler {
 
 	public Assembler(boolean im) {
 		inMemory = im;
+		if(!im) {
+			try {
+				VmesnaDatoteka.init();
+			} catch (IOException e) {
+				System.err.println("Napaka: Vmesne datoteke ni bilo mogoče odpreti!");
+				//e.printStackTrace();
+				throw new RuntimeException();
+			}
+		}
 	}
 
 	public void assemble(String source, String destination)
@@ -32,10 +42,6 @@ public class Assembler {
 
 	public void assemble(String source) throws NapakaPriPrevajanju {
 		assemble(source, "saf.r");
-	}
-
-	private void pisivVmesnoDat() {
-		// TODO: write me
 	}
 
 	// pretvarja operand v neko vrednost, ki spominja na integer :) zato da
