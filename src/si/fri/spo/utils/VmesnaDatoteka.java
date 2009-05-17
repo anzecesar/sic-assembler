@@ -5,13 +5,18 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
+import java.util.Vector;
 
 import si.fri.spo.data.Vrstica;
 
 public class VmesnaDatoteka {
 	private static VmesnaDatoteka m_instance;
 	
-	private static final String IME_DATOTEKE = "objektna";
+	private static final String IME_DATOTEKE = "/tmp/objektna";
+	
+	private boolean inMemory;
+	private List<Vrstica> vmesnaDatoteka;
 	
 	private BufferedWriter writer;
 	private BufferedReader reader;
@@ -22,12 +27,17 @@ public class VmesnaDatoteka {
 		stPrebranihVrstic = 0;
 	}
 	
-	public static void init() throws IOException {
+	public static void init(boolean inMemory) throws IOException {
 		if(m_instance != null)
 			return;
 		m_instance = new VmesnaDatoteka();
 		
-		m_instance.writer = new BufferedWriter(new FileWriter(IME_DATOTEKE));
+		m_instance.inMemory = inMemory;
+		if(!inMemory)
+			m_instance.writer = new BufferedWriter(new FileWriter(IME_DATOTEKE));
+		else
+			m_instance.vmesnaDatoteka = new Vector<Vrstica>();
+		
 	}
 	
 	public static VmesnaDatoteka getInstance() {
@@ -38,24 +48,35 @@ public class VmesnaDatoteka {
 	}
 	
 	public void pisi(Vrstica v) throws IOException {
+		if(inMemory) {
+			vmesnaDatoteka.add(v);
+			return;
+		}
+		
 		if(writer == null) {
-			if(reader != null) {
-				reader.close();
-				reader = null;
-			}
+			close();
 			//Odpri z append = true :]
 			writer = new BufferedWriter(new FileWriter(IME_DATOTEKE, true));
 		}
 		//pise v vmesno datoteko
-		writer.append(v.serialize());
+		//System.out.println(v.serialize());
+		writer.write(v.serialize());
+		writer.newLine();
+		//writer.flush();
 	}
 	
 	public Vrstica beri() throws IOException {
-		if(reader == null) {
-			if(writer != null) {
-				writer.close();
-				writer = null;
+		if(inMemory) {
+			try {
+				return vmesnaDatoteka.get(stPrebranihVrstic++);
+			} catch (ArrayIndexOutOfBoundsException e) {
+				//Dosegli smo konec datoteke.
+				return null;
 			}
+		}
+		
+		if(reader == null) {
+			close();
 			reader = new BufferedReader(new FileReader(IME_DATOTEKE));
 		}
 		//bere iz vmesne datoteke
@@ -66,14 +87,16 @@ public class VmesnaDatoteka {
 		return Vrstica.deserialize(raw);
 	}
 	
-	public void reset() {
-		//postavi kazalec v datoteki na zacetek
-	}
-	
-	protected void finalize() throws Throwable {
-		//Destruktor :]
-		writer.close();
-		
-		super.finalize();
+	public void close() throws IOException {
+		//zapre reader ali writer :].
+		if(writer != null) {
+			writer.close();
+			writer = null;
+		}
+		if(reader != null) {
+			stPrebranihVrstic = 0;
+			reader.close();
+			reader = null;
+		}
 	}
 }

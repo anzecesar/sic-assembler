@@ -7,7 +7,7 @@ public class Vrstica {
 	private String mnemonik;
 	private String labela;
 	private String operand;
-	private int lokSt;
+	private Integer lokSt;
 	private boolean extended = false;
 	
 	public boolean hasMnemonik() {
@@ -49,6 +49,9 @@ public class Vrstica {
 			vrstica += "(o)" + operand;
 		if(extended)
 			vrstica += " [extended]";
+		
+		if(lokSt != null)
+			vrstica += "(s)" + lokSt;
 			
 		return vrstica;
 	}
@@ -70,7 +73,10 @@ public class Vrstica {
 	}
 	
 	public static Vrstica deserialize(String prebranaVrstica) {
-		String[] stolpci = prebranaVrstica.split("\\w");
+		if(prebranaVrstica == null)
+			return null;
+		
+		String[] stolpci = prebranaVrstica.split("\\s+");
 		Vrstica v = new Vrstica();
 		
 		if(!"N".equals(stolpci[0]))
@@ -84,6 +90,7 @@ public class Vrstica {
 			v.setOperand(stolpci[2]);
 		
 		v.setExtended(Boolean.getBoolean(stolpci[3]));
+		
 		v.setLokSt(Integer.parseInt(stolpci[4]));
 		
 		return v;

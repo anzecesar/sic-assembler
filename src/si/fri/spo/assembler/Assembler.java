@@ -5,8 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-import javax.imageio.spi.RegisterableService;
-
 import si.fri.spo.data.Vrstica;
 import si.fri.spo.exceptions.NapakaPriPrevajanju;
 import si.fri.spo.utils.MnetabManager;
@@ -18,22 +16,18 @@ import si.fri.spo.utils.Registers;
 public class Assembler {
 	private int zacetniNaslovOP, stariLokSt;
 
-	private boolean inMemory;
-
 	public Assembler() {
 		this(true);
 	}
 
 	public Assembler(boolean im) {
-		inMemory = im;
-		if(!im) {
-			try {
-				VmesnaDatoteka.init();
-			} catch (IOException e) {
-				System.err.println("Napaka: Vmesne datoteke ni bilo mogoče odpreti!");
-				//e.printStackTrace();
-				throw new RuntimeException();
-			}
+		try {
+			VmesnaDatoteka.init(im);
+		} catch (IOException e) {
+			System.err
+					.println("Napaka: Vmesne datoteke ni bilo mogoče odpreti!");
+			// e.printStackTrace();
+			throw new RuntimeException();
 		}
 	}
 
@@ -62,7 +56,6 @@ public class Assembler {
 
 	private void doAssemble(String source) throws NapakaPriPrevajanju {
 		String vrstica = "";
-		PrebranaDatoteka dat = new PrebranaDatoteka();
 		Parser p = new Parser();
 
 		int stVrstice = 1;
@@ -70,6 +63,9 @@ public class Assembler {
 			BufferedReader input = new BufferedReader(new FileReader(source));
 			Vrstica v;
 			int lokSt = 0;
+
+			VmesnaDatoteka vmes = VmesnaDatoteka.getInstance();
+
 			while ((vrstica = input.readLine()) != null) {
 				v = p.parseLine(vrstica);
 
@@ -78,13 +74,20 @@ public class Assembler {
 					continue;
 
 				// System.out.println(stVrstice);
-				dat.dodajVrstico(v);
-				lokSt = pass1(v, lokSt);
+				// dat.dodajVrstico(v);
+
+				v = pass1(v, lokSt);
+				lokSt = v.getLokSt();
+
+				vmes.pisi(v);
+
 				System.out.println(" " + Integer.toHexString(stariLokSt));
-				if (!inMemory) {
-					// TODO: pisi v vmesno datoteko.
-				}
+
 				stVrstice++;
+			}
+			
+			while((v = vmes.beri()) != null) {
+				System.out.println(v.toString());
 			}
 		} catch (FileNotFoundException e) {
 			// Ce nam ne uspe odpreti datoteke...
@@ -98,22 +101,16 @@ public class Assembler {
 			throw (e);
 		}
 
-		// debug:
-		System.out.println("Konca prebrana datoteka: ");
-		for (Vrstica v : dat.getVrstice()) {
-			// System.out.println(v.toString());
-			pass2(v);
-		}
-
 	}
 
-	private int pass1(Vrstica v, int lokSt) throws NapakaPriPrevajanju {
+	private Vrstica pass1(Vrstica v, int lokSt) throws NapakaPriPrevajanju {
 		SimtabManager simTab = SimtabManager.getInstance();
 		MnetabManager mneTab = MnetabManager.getInstance();
 
 		if ("START".equals(v.getMnemonik())) {
 			zacetniNaslovOP = pretvoriOperand(v.getOperand());
-			return zacetniNaslovOP;
+			v.setLokSt(zacetniNaslovOP);
+			return v;
 		}
 
 		if (!"END".equals(v.getMnemonik())) {
@@ -143,7 +140,10 @@ public class Assembler {
 		} else {
 			stariLokSt = lokSt;
 		}
-		return lokSt;
+
+		v.setLokSt(lokSt);
+
+		return v;
 
 	}
 
@@ -154,7 +154,7 @@ public class Assembler {
 		String[] operand;
 		boolean vecParametrov = false;
 		int ukaz = mneTab.getOpCode(v.getMnemonik());
-		
+
 		if (v.getOperand() != null) {
 			if (v.getOperand().contains(","))
 				vecParametrov = true;
@@ -167,7 +167,7 @@ public class Assembler {
 			operand[0] = null;
 			operand[1] = null;
 		}
-		
+
 		if (mneTab.getFormat(v.getMnemonik()) == 1) {
 			ukaz = mneTab.getOpCode(v.getMnemonik());
 			ukaz = ukaz << 16;
@@ -182,30 +182,38 @@ public class Assembler {
 				ukaz += 0x0;
 			ukaz = ukaz << 8;
 		} else if (mneTab.getFormat(v.getMnemonik()) == 3) {
-			try{ 
-			if(v.getOperand().substring(0,1).equals("#")) { //neposredno(takojsnje) naslavljanje
-				ukaz = mneTab.getOpCode(v.getMnemonik());
-				ukaz = ukaz + 1;  //da lahko mirno dodamo bita n in i, in sicer na 0 in 1, torej pristejemo v bistvu samo 1 
-				ukaz = ukaz << 16; //preskocimo ostale bite [x,b,p,e] 4b in preostali odmik 12
-				if(simTab.isLabela(v.getOperand().substring(1))) {
-					//ce obstaja v tabeli simbol, ki je definiran po znaku za takojsnje naslavljanje
-					//vzamemo lokSt in ga damo kot operand, drugace je ali nedefiniran simbol oz. stevilo
-				} else {
-					try {
-						ukaz = ukaz + Integer.parseInt(v.getOperand().substring(1));
-						 
-					} catch (NumberFormatException e) {
-						//postavi bit napake, oh joy. Labela ne obstaja. 
+			try {
+				if (v.getOperand().substring(0, 1).equals("#")) { // neposredno(takojsnje)
+																	// naslavljanje
+					ukaz = mneTab.getOpCode(v.getMnemonik());
+					ukaz = ukaz + 1; // da lahko mirno dodamo bita n in i, in
+										// sicer na 0 in 1, torej pristejemo v
+										// bistvu samo 1
+					ukaz = ukaz << 16; // preskocimo ostale bite [x,b,p,e] 4b in
+										// preostali odmik 12
+					if (simTab.isLabela(v.getOperand().substring(1))) {
+						// ce obstaja v tabeli simbol, ki je definiran po znaku
+						// za takojsnje naslavljanje
+						// vzamemo lokSt in ga damo kot operand, drugace je ali
+						// nedefiniran simbol oz. stevilo
+					} else {
+						try {
+							ukaz = ukaz
+									+ Integer.parseInt(v.getOperand()
+											.substring(1));
+
+						} catch (NumberFormatException e) {
+							// postavi bit napake, oh joy. Labela ne obstaja.
+						}
 					}
-				} 
-					
+
+				}
+
+			} catch (NullPointerException e) {
+				ukaz = mneTab.getOpCode(v.getMnemonik());
+
+				// format 3 brez operanda
 			}
-
-		} catch(NullPointerException e) {
-			ukaz = mneTab.getOpCode(v.getMnemonik());
-
-			//format 3 brez operanda
-		}
 		}
 		System.out.println(Integer.toHexString(ukaz));
 	}

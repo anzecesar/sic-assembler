@@ -1,10 +1,9 @@
 STRCP2	START	1000			.1000
 FIRST	LDT		#11				.1000 75000b
 		LDX		#0				.1003 050000
-<<<<<<< HEAD:samples/very_simple.sic
+
 		LDA 	#NEKI
-=======
->>>>>>> cc66868e0e143fbbbd762480021e623e553e88f0:samples/very_simple.sic
+
 MOVECH	LDCH	STR1,X			.1006 53A008
 		STCH	STR2,X			.1009 57A010
 		TIXR	T				.100C B850
