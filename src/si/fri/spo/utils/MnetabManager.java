@@ -104,11 +104,14 @@ public class MnetabManager {
 	}
 	
 	public int getOpCode(String s) {
-		return mnetab.get(s).getOptcode();
+		return mnetab.get(s).getOpcode();
+	}
+	
+	public int getShiftedOpCode(String s) {
+		return mnetab.get(s).getShiftedOpCode();
 	}
 	
 	public int getFormat(String s) {
-		return mnetab.get(s).getFormat();
-		
-	} 
+		return mnetab.get(s).getFormat();		
+	}
 }
