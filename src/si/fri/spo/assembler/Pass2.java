@@ -35,10 +35,9 @@ public class Pass2 {
 		}
 		
 		// Format 1 je ze kar OpCode.
-		System.out.println();
 		if (mneTab.getFormat(v.getMnemonik()) == 2) {
-			System.out.println("Fromat 2: " + Integer.toHexString(ukaz) + " "
-					+ v.getMnemonik());
+			System.out.print("A-Fromat 2: " + Integer.toHexString(ukaz) + " "
+					+ v.getMnemonik() + " ");
 
 			int op;
 
@@ -51,45 +50,45 @@ public class Pass2 {
 			}
 
 		} else if (mneTab.getFormat(v.getMnemonik()) == 3) {
-			System.out.println("Fromat 3: " + Integer.toHexString(ukaz) + " "
-					+ v.getMnemonik());
+			System.out.print("A-Fromat 3: " + Integer.toHexString(ukaz) + " "
+					+ v.getMnemonik() + " ");
 			
 			int naslov = 0;	
 			
 			if (operand != null && operand.contains(",X")) {
-				System.out.println("Indexno.");
+				System.out.print("Indexno. ");
 				// Indexno naslavljanje
 				ukaz |= Mnemonic.BIT_X_3;
 				
 				//Bita N in I sta lahko tudi 0.
-				ukaz |= Mnemonic.BIT_N_3;
-				ukaz |= Mnemonic.BIT_I_3;
+				//ukaz |= Mnemonic.BIT_N_3;
+				//ukaz |= Mnemonic.BIT_I_3;
 				
 				naslov = simTab.getVrednostOperanda(operand.substring(0, operand.indexOf(",")));
 				int pc = v.getLokSt();
 				naslov -= pc + 3;
 				
-				System.out.println("naslov: " + Integer.toHexString(naslov));
+				System.out.print("naslov: " + Integer.toHexString(naslov) + " ");
 				
 				ukaz += naslov;
 				
 				ukaz = pcAliBazno(simTab, operand, ukaz, naslov);
 				
-				
-				
 			} else if(operand != null && !operand.startsWith("#")) {
-				System.out.println("Pc/Bazno");
+				System.out.print("Pc/Bazno ");
 				//Najprej poskuša z Pc-relativnim, če je odmik, če je odmik
 				//izven meja, pa z baznim.
 				
 				int dn = simTab.getVrednostOperanda(operand);
-				int pc = v.getLokSt();
+				int pc = v.getLokSt() - 3;
+				
+				System.out.println(dn + " - " + pc);
 				
 				int odmik = dn - pc;
 				
 				//Bita N in I sta lahko tudi 0.
-				ukaz |= Mnemonic.BIT_N_3;
-				ukaz |= Mnemonic.BIT_I_3;
+				//ukaz |= Mnemonic.BIT_N_3;
+				//ukaz |= Mnemonic.BIT_I_3;
 				
 				ukaz += skrajsajInt(odmik);
 				
@@ -100,7 +99,7 @@ public class Pass2 {
 			} else if (operand != null
 					&& operand.startsWith("#")) { // neposredno(takojsnje)
 				// naslavljanje
-				System.out.println("Direktno");
+				System.out.print("Direktno ");
 				ukaz |= Mnemonic.BIT_I_3; // nastavi bit i na 1
 				
 				naslov = simTab.getVrednostOperanda(operand.substring(1));
@@ -115,6 +114,7 @@ public class Pass2 {
 	private int pcAliBazno(SimtabManager simTab, String operand, int ukaz,
 			int odmik) throws NapakaPriPrevajanju {
 		int dn;
+		System.out.println(odmik + " " + Integer.toHexString(odmik));
 		if (odmik >= -2048 && odmik <= 2047) {
 			//PC-relativno
 			ukaz |= Mnemonic.BIT_P_3;
