@@ -50,71 +50,82 @@ public class Pass2 {
 			}
 
 		} else if (mneTab.getFormat(v.getMnemonik()) == 3) {
-			System.out.print("A-Fromat 3: " + Integer.toHexString(ukaz) + " "
-					+ v.getMnemonik() + " ");
-			
-			int naslov = 0;	
-			
-			if (operand != null && operand.contains(",X")) {
-				System.out.print("Indexno. ");
-				// Indexno naslavljanje
-				ukaz |= Mnemonic.BIT_X_3;
-				
-				//Bita N in I sta lahko tudi 0.
-				//ukaz |= Mnemonic.BIT_N_3;
-				//ukaz |= Mnemonic.BIT_I_3;
-				
-				naslov = simTab.getVrednostOperanda(operand.substring(0, operand.indexOf(",")));
-				int pc = v.getLokSt();
-				naslov -= pc + 3;
-				
-				System.out.print("naslov: " + Integer.toHexString(naslov) + " ");
-				
-				ukaz += naslov;
-				
-				ukaz = pcAliBazno(simTab, operand, ukaz, naslov);
-				
-			} else if(operand != null && !operand.startsWith("#")) {
-				System.out.print("Pc/Bazno ");
-				//Najprej poskuša z Pc-relativnim, če je odmik, če je odmik
-				//izven meja, pa z baznim.
-				
-				int dn = simTab.getVrednostOperanda(operand);
-				int pc = v.getLokSt() - 3;
-				
-				System.out.println(dn + " - " + pc);
-				
-				int odmik = dn - pc;
-				
-				//Bita N in I sta lahko tudi 0.
-				//ukaz |= Mnemonic.BIT_N_3;
-				//ukaz |= Mnemonic.BIT_I_3;
-				
-				ukaz += skrajsajInt(odmik);
-				
-				ukaz = pcAliBazno(simTab, operand, ukaz, odmik);
-				
-				//System.out.println("Odmik: " + odmik);
-				
-			} else if (operand != null
-					&& operand.startsWith("#")) { // neposredno(takojsnje)
-				// naslavljanje
-				System.out.print("Direktno ");
-				ukaz |= Mnemonic.BIT_I_3; // nastavi bit i na 1
-				
-				naslov = simTab.getVrednostOperanda(operand.substring(1));
-				
-				ukaz += naslov;
-			}
+			if(!v.isExtended())
+				ukaz = obdelajFormat3in4(v, simTab, operand, ukaz);
+			else 
+				System.out.println("Format 4 se ni implementiran :]");
 
-		}
+		} 
 		System.out.println(Integer.toHexString(ukaz));
+	}
+
+	private int obdelajFormat3in4(Vrstica v, SimtabManager simTab, String operand,
+			int ukaz) throws NapakaPriPrevajanju {
+		System.out.print("A-Fromat 3: " + Integer.toHexString(ukaz) + " "
+				+ v.getMnemonik() + " ");
+		
+		int naslov = 0;
+		
+		if (operand != null && operand.contains(",X")) {
+			System.out.print("Indexno. ");
+			// Indexno naslavljanje
+			ukaz |= Mnemonic.BIT_X_3;
+			
+			//Bita N in I sta lahko tudi 0.
+			ukaz |= Mnemonic.BIT_N_3;
+			ukaz |= Mnemonic.BIT_I_3;
+			
+			naslov = simTab.getVrednostOperanda(operand.substring(0, operand.indexOf(",")));
+			int pc = v.getLokSt();
+			naslov -= pc + 3;
+			
+			System.out.print("naslov: " + Integer.toHexString(naslov) + " ");
+			
+			ukaz += naslov;
+			
+			ukaz = pcAliBazno(simTab, operand, ukaz, naslov);
+			
+		} else if(operand != null && !operand.startsWith("#")) {
+			System.out.print("Pc/Bazno ");
+			//Najprej poskuša z Pc-relativnim, če je odmik, če je odmik
+			//izven meja, pa z baznim.
+			
+			int dn = simTab.getVrednostOperanda(operand);
+			int pc = v.getLokSt();
+			
+			//System.out.println(dn + " - " + pc);
+			
+			int odmik = dn - pc;
+			
+			//Bita N in I sta lahko tudi 0.
+			ukaz |= Mnemonic.BIT_N_3;
+			ukaz |= Mnemonic.BIT_I_3;
+			
+			ukaz += skrajsajInt(odmik);
+			
+			ukaz = pcAliBazno(simTab, operand, ukaz, odmik);
+			
+			//System.out.println("Odmik: " + odmik);
+			
+		} else if (operand != null
+				&& operand.startsWith("#")) { // neposredno(takojsnje)
+			// naslavljanje
+			System.out.print("Direktno ");
+			ukaz |= Mnemonic.BIT_I_3; // nastavi bit i na 1
+			
+			naslov = simTab.getVrednostOperanda(operand.substring(1));
+			
+			ukaz += naslov;
+		}
+		return ukaz;
 	}
 
 	private int pcAliBazno(SimtabManager simTab, String operand, int ukaz,
 			int odmik) throws NapakaPriPrevajanju {
 		int dn;
-		System.out.println(odmik + " " + Integer.toHexString(odmik));
+		
+		//System.out.println(odmik + " " + Integer.toHexString(odmik));
+		
 		if (odmik >= -2048 && odmik <= 2047) {
 			//PC-relativno
 			ukaz |= Mnemonic.BIT_P_3;
@@ -138,6 +149,7 @@ public class Pass2 {
 				throw new NapakaPriPrevajanju("Neveljaven odmik, bazno naslavljanje omogočeno.\n");
 			}
 		}
+		//System.out.println("odmik " + odmik);
 		return ukaz;
 	}
 	

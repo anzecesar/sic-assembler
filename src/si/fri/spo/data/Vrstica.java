@@ -9,6 +9,7 @@ public class Vrstica {
 	private String operand;
 	private Integer lokSt;
 	private boolean extended = false;
+	private boolean posrednoNaslavljanje = false;
 	
 	public boolean hasMnemonik() {
 		if(mnemonik == null)
@@ -36,6 +37,9 @@ public class Vrstica {
 			extended = true;
 			//odstrani +:
 			operand = operand.substring(1);
+		} else if(operand.startsWith("@")) {
+			posrednoNaslavljanje = true;
+			operand = operand.substring(1);
 		}
 		this.operand = operand;
 	}
@@ -49,6 +53,8 @@ public class Vrstica {
 			vrstica += "(o)" + operand;
 		if(extended)
 			vrstica += " [extended]";
+		if(posrednoNaslavljanje)
+			vrstica += " [posredno naslovljen]";
 		
 		if(lokSt != null)
 			vrstica += "	(s)" + Integer.toHexString(lokSt);
@@ -69,7 +75,7 @@ public class Vrstica {
 		//Tu so lahko kaki zlobni zanki, kar nam ni vsec, zato enkodiramo...
 		o = Base64.encode(o.getBytes());
 		
-		return l + " " + mnemonik + " " + o + " " + extended + " " + lokSt;
+		return l + " " + mnemonik + " " + o + " " + extended + " " + posrednoNaslavljanje +" " + lokSt;
 	}
 	
 	public static Vrstica deserialize(String prebranaVrstica) {
@@ -91,7 +97,9 @@ public class Vrstica {
 		
 		v.setExtended(Boolean.getBoolean(stolpci[3]));
 		
-		v.setLokSt(Integer.parseInt(stolpci[4]));
+		v.posrednoNaslavljanje = Boolean.getBoolean(stolpci[4]);
+		
+		v.setLokSt(Integer.parseInt(stolpci[5]));
 		
 		return v;
 	}
@@ -110,5 +118,9 @@ public class Vrstica {
 
 	public void setExtended(boolean extended) {
 		this.extended = extended;
+	}
+
+	public boolean isPosrednoNaslavljanje() {
+		return posrednoNaslavljanje;
 	}
 }
