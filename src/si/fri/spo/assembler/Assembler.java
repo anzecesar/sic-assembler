@@ -129,7 +129,7 @@ public class Assembler {
 				lokSt = lokSt + 3 * (pretvoriOperand(v.getOperand()));
 			else if ("RESB".equals(trenutniMnemonik))
 				lokSt = lokSt + 4 * (pretvoriOperand(v.getOperand()));
-			else if ("BYTE".equals(trenutniMnemonik))
+			else if ("BYTE".equals(trenutniMnemonik)) 
 				lokSt = lokSt + 4 * (pretvoriOperand(v.getOperand()));
 			else if ("WORD".equals(trenutniMnemonik))
 				lokSt = lokSt + 3 * (pretvoriOperand(v.getOperand()));

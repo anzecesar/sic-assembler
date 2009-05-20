@@ -45,5 +45,20 @@ public class SimtabManager {
 	public int getLokSt(String labela) {
 		return simTab.get(labela);
 	}
+	
+	public int getVrednostOperanda(String o) throws NapakaPriPrevajanju {
+		if(simTab.containsKey(o)) {
+			return getLokSt(o);
+		} else {
+			int vred = 0;
+			try {
+				vred = Integer.parseInt(o);
+			} catch (NumberFormatException e) {
+				//e.printStackTrace();
+				throw new NapakaPriPrevajanju("Napačna vrednost operanda\n");
+			}
+			return vred;
+		}
+	}
 
 }
