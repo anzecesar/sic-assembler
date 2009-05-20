@@ -45,14 +45,29 @@ public class Assembler {
 	// pretvarja operand v neko vrednost, ki spominja na integer :) zato da
 	// lahko pozneje primerno povecamo lokSt
 	private int pretvoriOperand(String s) {
-		int operand = 0;
 		if (s.charAt(0) == '#')
-			operand = Integer.parseInt(s.substring(1));
+			return Integer.parseInt(s.substring(1));
 		if (s.charAt(0) == 'C')
-			operand = s.length() - 3; // prvi znak in ''
+			return s.length() - 3; // prvi znak in ''
 		if (Character.isDigit(s.charAt(0)))
-			operand = Integer.parseInt(s, 16);
-		return operand;
+			return Integer.parseInt(s);
+		if(s.startsWith("X'") && s.endsWith("'"))
+			return Integer.parseInt(s.substring(3,s.length()-1), 16);
+		return 0;
+	}
+	
+	private int getStBajtov(String s) {
+		if (s.charAt(0) == 'C')
+			return s.length() - 3; // prvi znak in ''
+		if (Character.isDigit(s.charAt(0))) {
+			s = Integer.toHexString(Integer.parseInt(s));
+			int vred =  s.length() - 3;
+			return vred/2 + (vred % 2);
+		} if(s.startsWith("X'") && s.endsWith("'")) {
+			int vred =  s.length() - 3;
+			return vred/2 + (vred % 2);
+		}
+		return 0;
 	}
 
 	private void doAssemble(String source) throws NapakaPriPrevajanju {
@@ -84,7 +99,7 @@ public class Assembler {
 
 				vmes.pisi(v);
 
-				System.out.println(" " + Integer.toHexString(stariLokSt));
+				//System.out.println(" " + Integer.toHexString(stariLokSt));
 
 				stVrstice++;
 			}
@@ -112,7 +127,7 @@ public class Assembler {
 		MnetabManager mneTab = MnetabManager.getInstance();
 
 		if ("START".equals(v.getMnemonik())) {
-			zacetniNaslovOP = pretvoriOperand(v.getOperand());
+			zacetniNaslovOP = Integer.parseInt(v.getOperand(), 16);
 			v.setLokSt(zacetniNaslovOP);
 			return v;
 		}
@@ -128,11 +143,12 @@ public class Assembler {
 			if ("RESW".equals(trenutniMnemonik))
 				lokSt = lokSt + 3 * (pretvoriOperand(v.getOperand()));
 			else if ("RESB".equals(trenutniMnemonik))
-				lokSt = lokSt + 4 * (pretvoriOperand(v.getOperand()));
-			else if ("BYTE".equals(trenutniMnemonik)) 
-				lokSt = lokSt + 4 * (pretvoriOperand(v.getOperand()));
+				lokSt = lokSt + pretvoriOperand(v.getOperand());
+			else if ("BYTE".equals(trenutniMnemonik))
+				//lokst + št. bajtov v operandu
+				lokSt = lokSt + getStBajtov(v.getOperand()); //* (pretvoriOperand(v.getOperand()));
 			else if ("WORD".equals(trenutniMnemonik))
-				lokSt = lokSt + 3 * (pretvoriOperand(v.getOperand()));
+				lokSt = lokSt + 3; //* (pretvoriOperand(v.getOperand()));
 			else if (mneTab.isMnemonik(trenutniMnemonik) == true) {
 				mneTab.getFormat(trenutniMnemonik);
 				lokSt = lokSt + mneTab.getFormat(trenutniMnemonik);
@@ -146,6 +162,8 @@ public class Assembler {
 		}
 
 		v.setLokSt(lokSt);
+		
+		System.out.println("Pass 1: " + Integer.toHexString(v.getLokSt()));
 
 		return v;
 

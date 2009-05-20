@@ -51,7 +51,7 @@ public class Vrstica {
 			vrstica += " [extended]";
 		
 		if(lokSt != null)
-			vrstica += "(s)" + lokSt;
+			vrstica += "	(s)" + Integer.toHexString(lokSt);
 			
 		return vrstica;
 	}

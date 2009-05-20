@@ -142,6 +142,9 @@ public class Pass2 {
 	}
 	
 	private int skrajsajInt(int i) {
+		if(i > 0)
+			return i;
+		
 		String s = Integer.toBinaryString(i);
 		s = s.substring(s.length()-12);
 		return Integer.parseInt(s, 2);
