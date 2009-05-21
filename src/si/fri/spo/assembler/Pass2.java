@@ -43,8 +43,8 @@ public class Pass2 {
 
 			if (operand.contains(",")) {
 				String[] o = operand.split(",");
-				ukaz += regs.getRegOpCode(o[1]) << 12;
-				ukaz += regs.getRegOpCode(o[2]) << 8;
+				ukaz += regs.getRegOpCode(o[0]) << 12;
+				ukaz += regs.getRegOpCode(o[1]) << 8;
 			} else {
 				ukaz += regs.getRegOpCode(operand) << 12;
 			}
@@ -75,11 +75,13 @@ public class Pass2 {
 			ukaz |= Mnemonic.BIT_N_3;
 			ukaz |= Mnemonic.BIT_I_3;
 			
-			naslov = simTab.getVrednostOperanda(operand.substring(0, operand.indexOf(",")));
+			operand = operand.substring(0, operand.indexOf(","));
+			
+			naslov = simTab.getVrednostOperanda(operand);
 			int pc = v.getLokSt();
 			naslov -= pc + 3;
 			
-			System.out.print("naslov: " + Integer.toHexString(naslov) + " ");
+			//System.out.print("naslov: " + Integer.toHexString(naslov) + " ");
 			
 			ukaz += naslov;
 			
@@ -154,7 +156,7 @@ public class Pass2 {
 	}
 	
 	private int skrajsajInt(int i) {
-		if(i > 0)
+		if(i >= 0)
 			return i;
 		
 		String s = Integer.toBinaryString(i);

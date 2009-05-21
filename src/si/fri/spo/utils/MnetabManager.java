@@ -96,10 +96,15 @@ public class MnetabManager {
 		mnetab.put("BYTE", new Mnemonic(0x0, -1));
 		mnetab.put("START", new Mnemonic(0x0, -1));
 		mnetab.put("END", new Mnemonic(0x0, -1));
+		mnetab.put("BASE", new Mnemonic(0x0, -1));
+		mnetab.put("NOBASE", new Mnemonic(0x0, -1));
 		
 	}
 	
 	public boolean isMnemonik(String mnemonik) {
+		if(mnemonik != null && mnemonik.startsWith("+")) {
+			mnemonik = mnemonik.substring(1);
+		}
 		return mnetab.containsKey(mnemonik);
 	}
 	

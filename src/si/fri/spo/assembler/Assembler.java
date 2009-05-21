@@ -74,7 +74,7 @@ public class Assembler {
 		String vrstica = "";
 		Parser p = new Parser();
 
-		int stVrstice = 1;
+		int stVrstice = 0;
 		try {
 			BufferedReader input = new BufferedReader(new FileReader(source));
 			Vrstica v;
@@ -85,11 +85,16 @@ public class Assembler {
 			Pass2 p2 = new Pass2();
 
 			while ((vrstica = input.readLine()) != null) {
+				stVrstice++;
 				v = p.parseLine(vrstica);
 
 				// Izognimo se praznim vrsticam.
-				if (v == null)
+				if (v == null) {
+					v = new Vrstica();
+					v.setVeljavna(false);
+					vmes.pisi(v);
 					continue;
+				}
 
 				// System.out.println(stVrstice);
 				// dat.dodajVrstico(v);
@@ -101,12 +106,13 @@ public class Assembler {
 
 				//System.out.println(" " + Integer.toHexString(stariLokSt));
 
-				stVrstice++;
 			}
-			
+			stVrstice = 0;
 			while((v = vmes.beri()) != null) {
 				//System.out.println(v.toString());
-				p2.pass2(v);
+				stVrstice++;
+				if(v.isVeljavna())
+					p2.pass2(v);
 			}
 		} catch (FileNotFoundException e) {
 			// Ce nam ne uspe odpreti datoteke...

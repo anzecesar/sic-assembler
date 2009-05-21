@@ -11,6 +11,8 @@ public class Vrstica {
 	private boolean extended = false;
 	private boolean posrednoNaslavljanje = false;
 	
+	private boolean veljavna = true; //zaradi pravilnega oštevilčenja vrstic.
+	
 	public boolean hasMnemonik() {
 		if(mnemonik == null)
 			return false;
@@ -21,6 +23,10 @@ public class Vrstica {
 		return mnemonik;
 	}
 	public void setMnemonik(String mnemonik) {
+		if(mnemonik.startsWith("+")) {
+			extended = true;
+			mnemonik = mnemonik.substring(1);
+		}
 		this.mnemonik = mnemonik;
 	}
 	public String getLabela() {
@@ -33,11 +39,7 @@ public class Vrstica {
 		return operand;
 	}
 	public void setOperand(String operand) {
-		if(operand.startsWith("+")) {
-			extended = true;
-			//odstrani +:
-			operand = operand.substring(1);
-		} else if(operand.startsWith("@")) {
+		if(operand.startsWith("@")) {
 			posrednoNaslavljanje = true;
 			operand = operand.substring(1);
 		}
@@ -45,6 +47,8 @@ public class Vrstica {
 	}
 	
 	public String toString() {
+		if(!veljavna)
+			return "Vrstica je komentar/prazna.";
 		String vrstica = "";
 		if(labela != null)
 			vrstica += "(l)" + labela + " ";
@@ -75,7 +79,8 @@ public class Vrstica {
 		//Tu so lahko kaki zlobni zanki, kar nam ni vsec, zato enkodiramo...
 		o = Base64.encode(o.getBytes());
 		
-		return l + " " + mnemonik + " " + o + " " + extended + " " + posrednoNaslavljanje +" " + lokSt;
+		return l + " " + mnemonik + " " + o + " " + extended + " " + posrednoNaslavljanje + " " + lokSt
+		+ " " + veljavna;
 	}
 	
 	public static Vrstica deserialize(String prebranaVrstica) {
@@ -101,6 +106,8 @@ public class Vrstica {
 		
 		v.setLokSt(Integer.parseInt(stolpci[5]));
 		
+		v.setVeljavna(Boolean.getBoolean(stolpci[6]));
+		
 		return v;
 	}
 
@@ -122,5 +129,13 @@ public class Vrstica {
 
 	public boolean isPosrednoNaslavljanje() {
 		return posrednoNaslavljanje;
+	}
+
+	public boolean isVeljavna() {
+		return veljavna;
+	}
+
+	public void setVeljavna(boolean veljavna) {
+		this.veljavna = veljavna;
 	}
 }
