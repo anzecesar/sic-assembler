@@ -138,7 +138,11 @@ public class Pass2 {
 			
 			//Bita N in I sta lahko tudi 0.
 			ukaz |= Mnemonic.BIT_N_3;
-			ukaz |= Mnemonic.BIT_I_3;
+			
+			
+			if(!v.isPosrednoNaslavljanje()) {
+				ukaz |= Mnemonic.BIT_I_3;
+			}
 			
 			//ukaz += skrajsajInt(odmik);
 			
@@ -154,7 +158,14 @@ public class Pass2 {
 			
 			naslov = simTab.getVrednostOperanda(operand.substring(1));
 			
-			ukaz += naslov;
+			if(simTab.isLabela(operand.substring(1))) {
+				int dn = simTab.getVrednostOperanda(operand.substring(1));
+				int pc = v.getLokSt();
+				int odmik = dn - pc;
+				
+				ukaz = pcAliBazno(simTab, operand, ukaz, odmik);
+			} else
+				ukaz += naslov;
 		}
 		return ukaz;
 	}
@@ -170,6 +181,8 @@ public class Pass2 {
 			ukaz |= Mnemonic.BIT_P_3;
 			
 			System.out.print("PC ");
+			
+			ukaz += skrajsajInt(odmik);
 			
 			//System.out.println("Binary: " + Integer.toBinaryString(ukaz) + ", odmik: " + odmik + " - " + Integer.toBinaryString(odmik));
 			//System.out.println("Skrajsan odmik: " + skrajsajInt(odmik) + " " + Integer.toBinaryString(skrajsajInt(odmik)));
