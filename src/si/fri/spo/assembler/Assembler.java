@@ -5,14 +5,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-import si.fri.spo.data.Mnemonic;
 import si.fri.spo.data.Vrstica;
 import si.fri.spo.exceptions.NapakaPriPrevajanju;
 import si.fri.spo.utils.MnetabManager;
 import si.fri.spo.utils.Parser;
 import si.fri.spo.utils.SimtabManager;
 import si.fri.spo.utils.VmesnaDatoteka;
-import si.fri.spo.utils.Registers;
 
 public class Assembler {
 	private int zacetniNaslovOP, stariLokSt;
@@ -51,21 +49,22 @@ public class Assembler {
 			return s.length() - 3; // prvi znak in ''
 		if (Character.isDigit(s.charAt(0)))
 			return Integer.parseInt(s);
-		if(s.startsWith("X'") && s.endsWith("'"))
-			return Integer.parseInt(s.substring(3,s.length()-1), 16);
+		if (s.startsWith("X'") && s.endsWith("'"))
+			return Integer.parseInt(s.substring(3, s.length() - 1), 16);
 		return 0;
 	}
-	
+
 	private int getStBajtov(String s) {
 		if (s.charAt(0) == 'C')
 			return s.length() - 3; // prvi znak in ''
 		if (Character.isDigit(s.charAt(0))) {
 			s = Integer.toHexString(Integer.parseInt(s));
-			int vred =  s.length() - 3;
-			return vred/2 + (vred % 2);
-		} if(s.startsWith("X'") && s.endsWith("'")) {
-			int vred =  s.length() - 3;
-			return vred/2 + (vred % 2);
+			int vred = s.length() - 3;
+			return vred / 2 + (vred % 2);
+		}
+		if (s.startsWith("X'") && s.endsWith("'")) {
+			int vred = s.length() - 3;
+			return vred / 2 + (vred % 2);
 		}
 		return 0;
 	}
@@ -81,7 +80,7 @@ public class Assembler {
 			int lokSt = 0;
 
 			VmesnaDatoteka vmes = VmesnaDatoteka.getInstance();
-			
+
 			Pass2 p2 = new Pass2();
 
 			while ((vrstica = input.readLine()) != null) {
@@ -104,14 +103,14 @@ public class Assembler {
 
 				vmes.pisi(v);
 
-				//System.out.println(" " + Integer.toHexString(stariLokSt));
+				// System.out.println(" " + Integer.toHexString(stariLokSt));
 
 			}
 			stVrstice = 0;
-			while((v = vmes.beri()) != null) {
-				//System.out.println(v.toString());
+			while ((v = vmes.beri()) != null) {
+				// System.out.println(v.toString());
 				stVrstice++;
-				if(v.isVeljavna())
+				if (v.isVeljavna())
 					p2.pass2(v);
 			}
 		} catch (FileNotFoundException e) {
@@ -151,17 +150,17 @@ public class Assembler {
 			else if ("RESB".equals(trenutniMnemonik))
 				lokSt = lokSt + pretvoriOperand(v.getOperand());
 			else if ("BYTE".equals(trenutniMnemonik))
-				//lokst + št. bajtov v operandu
-				lokSt = lokSt + getStBajtov(v.getOperand()); //* (pretvoriOperand(v.getOperand()));
+				// lokst + št. bajtov v operandu
+				lokSt = lokSt + getStBajtov(v.getOperand()); // *
+																// (pretvoriOperand(v.getOperand()));
 			else if ("WORD".equals(trenutniMnemonik))
-				lokSt = lokSt + 3; //* (pretvoriOperand(v.getOperand()));
+				lokSt = lokSt + 3; // * (pretvoriOperand(v.getOperand()));
 			else if (mneTab.isMnemonik(trenutniMnemonik) == true) {
-				mneTab.getFormat(trenutniMnemonik);
-				if(mneTab.getFormat(trenutniMnemonik) == -1) 
-					return v;	
-				lokSt = lokSt + mneTab.getFormat(trenutniMnemonik);
-				if(v.isExtended()) {
-					lokSt += 3;
+				if (mneTab.getFormat(trenutniMnemonik) != -1) {
+					lokSt = lokSt + mneTab.getFormat(trenutniMnemonik);
+					if (v.isExtended()) {
+						lokSt += 1;
+					}
 				}
 			} else {
 				// napaka
@@ -173,8 +172,8 @@ public class Assembler {
 		}
 
 		v.setLokSt(lokSt);
-		
-		System.out.println("Pass 1: " + Integer.toHexString(v.getLokSt()));
+
+		System.out.println("Pass 1: " + v.getMnemonik() + " " + Integer.toHexString(v.getLokSt()));
 
 		return v;
 

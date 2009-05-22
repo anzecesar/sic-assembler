@@ -51,15 +51,51 @@ public class Pass2 {
 
 		} else if (mneTab.getFormat(v.getMnemonik()) == 3) {
 			if(!v.isExtended())
-				ukaz = obdelajFormat3in4(v, simTab, operand, ukaz);
-			else 
-				System.out.println("Format 4 se ni implementiran :]");
+				ukaz = obdelajFormat3(v, simTab, operand, ukaz);
+			else {
+				System.out.print("A-Fromat 4: " + Integer.toHexString(ukaz) + " "
+						+ v.getMnemonik() + " ");
+				
+				ukaz = ukaz << 8;
+				
+				ukaz |= Mnemonic.BIT_E_4;
+				
+				int naslov = 0;
+				
+				if (operand != null && operand.contains(",X")) {
+					//indeksno
+					ukaz |= Mnemonic.BIT_X_4;
+					
+					operand = operand.substring(0, operand.indexOf(","));
+					
+					naslov = simTab.getVrednostOperanda(operand);
+					int pc = v.getLokSt();
+					naslov -= pc + 4;
+					
+					ukaz += naslov;
+					
+				} else if(operand != null && operand.startsWith("#")) {
+					System.out.print("Direktno ");
+					ukaz |= Mnemonic.BIT_I_4; // nastavi bit i na 1
+					
+					naslov = simTab.getVrednostOperanda(operand.substring(1));
+					
+					ukaz += naslov;
+				} else if(operand != null && !operand.startsWith("#")) {
+					ukaz |= Mnemonic.BIT_I_4; // nastavi bit i na 1
+					ukaz |= Mnemonic.BIT_N_4;
+					
+					naslov = simTab.getVrednostOperanda(operand);
+					
+					ukaz += naslov;
+				}
+			}
 
 		} 
 		System.out.println(Integer.toHexString(ukaz));
 	}
 
-	private int obdelajFormat3in4(Vrstica v, SimtabManager simTab, String operand,
+	private int obdelajFormat3(Vrstica v, SimtabManager simTab, String operand,
 			int ukaz) throws NapakaPriPrevajanju {
 		System.out.print("A-Fromat 3: " + Integer.toHexString(ukaz) + " "
 				+ v.getMnemonik() + " ");

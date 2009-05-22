@@ -32,6 +32,8 @@ public class SimtabManager {
 			throw new NapakaPriPrevajanju("Napaka: Labela " + labela + " je definirana dvakrat!");
 		}
 		
+		//System.out.println("Labela: " + labela + " " + lokSt + " hex " + Integer.toHexString(lokSt));
+		
 		simTab.put(labela, lokSt);
 	}
 
