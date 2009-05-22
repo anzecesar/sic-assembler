@@ -26,6 +26,7 @@ public class Pass2 {
 			//Če naletimo na direktivo BASE, omogoči bazno relativno naslavljanje
 			isBase = true;
 			baseNaslov = simTab.getVrednostOperanda(operand);
+			//System.out.println("SET BASE: " + baseNaslov + " operand " + operand);
 			return;
 		}
 		
@@ -115,16 +116,16 @@ public class Pass2 {
 			
 			naslov = simTab.getVrednostOperanda(operand);
 			int pc = v.getLokSt();
-			naslov -= pc + 3;
+			naslov = pc - naslov;
 			
-			//System.out.print("naslov: " + Integer.toHexString(naslov) + " ");
+			//System.out.print("naslov: " + naslov + " " + pc + " " + Integer.toHexString(ukaz) + " ");
 			
-			ukaz += naslov;
+			//ukaz += naslov;
 			
 			ukaz = pcAliBazno(simTab, operand, ukaz, naslov);
 			
 		} else if(operand != null && !operand.startsWith("#")) {
-			System.out.print("Pc/Bazno ");
+			//System.out.print("Pc/Bazno ");
 			//Najprej poskuša z Pc-relativnim, če je odmik, če je odmik
 			//izven meja, pa z baznim.
 			
@@ -139,7 +140,7 @@ public class Pass2 {
 			ukaz |= Mnemonic.BIT_N_3;
 			ukaz |= Mnemonic.BIT_I_3;
 			
-			ukaz += skrajsajInt(odmik);
+			//ukaz += skrajsajInt(odmik);
 			
 			ukaz = pcAliBazno(simTab, operand, ukaz, odmik);
 			
@@ -162,11 +163,13 @@ public class Pass2 {
 			int odmik) throws NapakaPriPrevajanju {
 		int dn;
 		
-		//System.out.println(odmik + " " + Integer.toHexString(odmik));
+		//System.out.print(" odmik: " + odmik + " " + Integer.toHexString(odmik) + " ");
 		
 		if (odmik >= -2048 && odmik <= 2047) {
 			//PC-relativno
 			ukaz |= Mnemonic.BIT_P_3;
+			
+			System.out.print("PC ");
 			
 			//System.out.println("Binary: " + Integer.toBinaryString(ukaz) + ", odmik: " + odmik + " - " + Integer.toBinaryString(odmik));
 			//System.out.println("Skrajsan odmik: " + skrajsajInt(odmik) + " " + Integer.toBinaryString(skrajsajInt(odmik)));
@@ -175,11 +178,20 @@ public class Pass2 {
 				//Napaka
 				throw new NapakaPriPrevajanju("Neveljaven odmik, bazno naslavljanje ni omogočeno.\n");
 			}
+			
 			dn = simTab.getVrednostOperanda(operand);
+			
+			//baseNaslov = 51;
+			
+			System.out.print("Base ");
 			
 			odmik = dn - baseNaslov;
 			
 			ukaz |= Mnemonic.BIT_B_3;
+			
+			//System.out.println("ukaz: " + ukaz);
+			
+			//System.out.println("skrajsan odmik: " + skrajsajInt(odmik));
 			
 			ukaz += skrajsajInt(odmik);
 			
