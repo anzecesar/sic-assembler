@@ -31,9 +31,12 @@ public class Mnemonic {
 	}
 	
 	public int getShiftedOpCode() {
-		//Predpostavlja, da so vsi ukazi 24 bitni, in da se
-		//ukaz vedno zacne na prvem bajtu.
-				
+		if(format == 1)
+			return opcode;
+		
+		if(format == 2)
+			return opcode << 8;
+		
 		return opcode << 16;
 		
 	}

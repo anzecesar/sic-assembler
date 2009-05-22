@@ -106,12 +106,18 @@ public class Assembler {
 				// System.out.println(" " + Integer.toHexString(stariLokSt));
 
 			}
+			//System.out.println("Pass 2");
 			stVrstice = 0;
 			while ((v = vmes.beri()) != null) {
 				// System.out.println(v.toString());
 				stVrstice++;
-				if (v.isVeljavna())
-					p2.pass2(v);
+				if (v.isVeljavna()) {
+					
+					String ukaz = p2.pass2(v);
+					
+					if(ukaz.length() > 0)
+						System.out.println(ukaz);
+				}
 			}
 		} catch (FileNotFoundException e) {
 			// Ce nam ne uspe odpreti datoteke...
