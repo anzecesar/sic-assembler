@@ -157,7 +157,12 @@ public class Assembler {
 				lokSt = lokSt + 3; //* (pretvoriOperand(v.getOperand()));
 			else if (mneTab.isMnemonik(trenutniMnemonik) == true) {
 				mneTab.getFormat(trenutniMnemonik);
+				if(mneTab.getFormat(trenutniMnemonik) == -1) 
+					return v;	
 				lokSt = lokSt + mneTab.getFormat(trenutniMnemonik);
+				if(v.isExtended()) {
+					lokSt += 3;
+				}
 			} else {
 				// napaka
 				throw new NapakaPriPrevajanju("Napaka: Prebran mnemonik "
