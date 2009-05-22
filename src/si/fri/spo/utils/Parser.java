@@ -15,11 +15,11 @@ public class Parser {
 	 */
 	public Vrstica parseLine(String v) throws NapakaPriPrevajanju {
 		// najprej ocistimo vrstico komentarjev...
-		int cIndex = v.indexOf(".");
-		
 		if(v.contains(".") && v.length() == 1 || v.startsWith("."))
 			//samo komentar v vrstici
 			return null;
+		
+		int cIndex = v.indexOf(".");
 		
 		if (cIndex > 0)
 			v = v.substring(0, cIndex);
