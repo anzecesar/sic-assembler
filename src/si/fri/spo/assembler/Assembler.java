@@ -7,14 +7,10 @@ import java.io.IOException;
 
 import si.fri.spo.data.Vrstica;
 import si.fri.spo.exceptions.NapakaPriPrevajanju;
-import si.fri.spo.utils.MnetabManager;
 import si.fri.spo.utils.Parser;
-import si.fri.spo.utils.SimtabManager;
 import si.fri.spo.utils.VmesnaDatoteka;
 
 public class Assembler {
-	private int zacetniNaslovOP, stariLokSt;
-
 	public Assembler() {
 		this(true);
 	}
@@ -40,35 +36,6 @@ public class Assembler {
 		assemble(source, "saf.r");
 	}
 
-	// pretvarja operand v neko vrednost, ki spominja na integer :) zato da
-	// lahko pozneje primerno povecamo lokSt
-	private int pretvoriOperand(String s) {
-		if (s.charAt(0) == '#')
-			return Integer.parseInt(s.substring(1));
-		if (s.charAt(0) == 'C')
-			return s.length() - 3; // prvi znak in ''
-		if (Character.isDigit(s.charAt(0)))
-			return Integer.parseInt(s);
-		if (s.startsWith("X'") && s.endsWith("'"))
-			return Integer.parseInt(s.substring(3, s.length() - 1), 16);
-		return 0;
-	}
-
-	private int getStBajtov(String s) {
-		if (s.charAt(0) == 'C')
-			return s.length() - 3; // prvi znak in ''
-		if (Character.isDigit(s.charAt(0))) {
-			s = Integer.toHexString(Integer.parseInt(s));
-			int vred = s.length() - 3;
-			return vred / 2 + (vred % 2);
-		}
-		if (s.startsWith("X'") && s.endsWith("'")) {
-			int vred = s.length() - 3;
-			return vred / 2 + (vred % 2);
-		}
-		return 0;
-	}
-
 	private void doAssemble(String source) throws NapakaPriPrevajanju {
 		String vrstica = "";
 		Parser p = new Parser();
@@ -77,11 +44,12 @@ public class Assembler {
 		try {
 			BufferedReader input = new BufferedReader(new FileReader(source));
 			Vrstica v;
-			int lokSt = 0;
+			//int lokSt = 0;
 
 			VmesnaDatoteka vmes = VmesnaDatoteka.getInstance();
 
 			Pass2 p2 = new Pass2();
+			Pass1 p1 = new Pass1();
 
 			while ((vrstica = input.readLine()) != null) {
 				stVrstice++;
@@ -98,8 +66,8 @@ public class Assembler {
 				// System.out.println(stVrstice);
 				// dat.dodajVrstico(v);
 
-				v = pass1(v, lokSt);
-				lokSt = v.getLokSt();
+				v = p1.pass1(v);
+				//lokSt = v.getLokSt();
 
 				vmes.pisi(v);
 
@@ -130,58 +98,6 @@ public class Assembler {
 					+ " (Vrstica: " + vrstica + ")\n");
 			throw (e);
 		}
-
-	}
-
-	private Vrstica pass1(Vrstica v, int lokSt) throws NapakaPriPrevajanju {
-		SimtabManager simTab = SimtabManager.getInstance();
-		MnetabManager mneTab = MnetabManager.getInstance();
-
-		if ("START".equals(v.getMnemonik())) {
-			zacetniNaslovOP = Integer.parseInt(v.getOperand(), 16);
-			v.setLokSt(zacetniNaslovOP);
-			return v;
-		}
-
-		if (!"END".equals(v.getMnemonik())) {
-			String labela = v.getLabela();
-			if (labela != null) {
-				simTab.dodajLabelo(labela, lokSt);
-			}
-			stariLokSt = lokSt;
-			String trenutniMnemonik = v.getMnemonik();
-			// TODO: preveri vrednosti :)
-			if ("RESW".equals(trenutniMnemonik))
-				lokSt = lokSt + 3 * (pretvoriOperand(v.getOperand()));
-			else if ("RESB".equals(trenutniMnemonik))
-				lokSt = lokSt + pretvoriOperand(v.getOperand());
-			else if ("BYTE".equals(trenutniMnemonik))
-				// lokst + št. bajtov v operandu
-				lokSt = lokSt + getStBajtov(v.getOperand()); // *
-																// (pretvoriOperand(v.getOperand()));
-			else if ("WORD".equals(trenutniMnemonik))
-				lokSt = lokSt + 3; // * (pretvoriOperand(v.getOperand()));
-			else if (mneTab.isMnemonik(trenutniMnemonik) == true) {
-				if (mneTab.getFormat(trenutniMnemonik) != -1) {
-					lokSt = lokSt + mneTab.getFormat(trenutniMnemonik);
-					if (v.isExtended()) {
-						lokSt += 1;
-					}
-				}
-			} else {
-				// napaka
-				throw new NapakaPriPrevajanju("Napaka: Prebran mnemonik "
-						+ trenutniMnemonik + " ni veljaven mnemonik!");
-			}
-		} else {
-			stariLokSt = lokSt;
-		}
-
-		v.setLokSt(lokSt);
-
-		System.out.println("Pass 1: " + v.getMnemonik() + " " + Integer.toHexString(v.getLokSt()));
-
-		return v;
 
 	}
 }

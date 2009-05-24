@@ -66,44 +66,9 @@ public class Pass2 {
 
 		} else if (mneTab.getFormat(v.getMnemonik()) == 3) {
 			if (!v.isExtended())
-				ukaz = obdelajFormat3(v, simTab, operand, ukaz);
+				ukaz = obdelajFormat3(v, simTab, ukaz);
 			else {
-				//System.out.print("A-Fromat 4: " + Integer.toHexString(ukaz)
-				//		+ " " + v.getMnemonik() + " ");
-
-				ukaz = ukaz << 8;
-
-				ukaz |= Mnemonic.BIT_E_4;
-
-				int naslov = 0;
-
-				if (operand != null && operand.contains(",X")) {
-					// indeksno
-					ukaz |= Mnemonic.BIT_X_4;
-
-					operand = operand.substring(0, operand.indexOf(","));
-
-					naslov = simTab.getVrednostOperanda(operand);
-					int pc = v.getLokSt();
-					naslov -= pc + 4;
-
-					ukaz += naslov;
-
-				} else if (operand != null && operand.startsWith("#")) {
-					//System.out.print("Direktno ");
-					ukaz |= Mnemonic.BIT_I_4; // nastavi bit i na 1
-
-					naslov = simTab.getVrednostOperanda(operand.substring(1));
-
-					ukaz += naslov;
-				} else if (operand != null && !operand.startsWith("#")) {
-					ukaz |= Mnemonic.BIT_I_4; // nastavi bit i na 1
-					ukaz |= Mnemonic.BIT_N_4;
-
-					naslov = simTab.getVrednostOperanda(operand);
-
-					ukaz += naslov;
-				}
+				ukaz = obdelajFormat4(v, simTab, ukaz);
 			}
 
 		}
@@ -113,11 +78,54 @@ public class Pass2 {
 		return Integer.toHexString(ukaz);
 	}
 
-	private int obdelajFormat3(Vrstica v, SimtabManager simTab, String operand,
+	private int obdelajFormat4(Vrstica v, SimtabManager simTab,
+			int ukaz) throws NapakaPriPrevajanju {
+		
+		String operand = v.getOperand();
+		
+		ukaz = ukaz << 8;
+
+		ukaz |= Mnemonic.BIT_E_4;
+
+		int naslov = 0;
+
+		if (operand != null && operand.contains(",X")) {
+			// indeksno
+			ukaz |= Mnemonic.BIT_X_4;
+
+			operand = operand.substring(0, operand.indexOf(","));
+
+			naslov = simTab.getVrednostOperanda(operand);
+			int pc = v.getLokSt();
+			naslov -= pc + 4;
+
+			ukaz += naslov;
+
+		} else if (operand != null && operand.startsWith("#")) {
+			//System.out.print("Direktno ");
+			ukaz |= Mnemonic.BIT_I_4; // nastavi bit i na 1
+
+			naslov = simTab.getVrednostOperanda(operand.substring(1));
+
+			ukaz += naslov;
+		} else if (operand != null && !operand.startsWith("#")) {
+			ukaz |= Mnemonic.BIT_I_4; // nastavi bit i na 1
+			ukaz |= Mnemonic.BIT_N_4;
+
+			naslov = simTab.getVrednostOperanda(operand);
+
+			ukaz += naslov;
+		}
+		return ukaz;
+	}
+
+	private int obdelajFormat3(Vrstica v, SimtabManager simTab,
 			int ukaz) throws NapakaPriPrevajanju {
 		//System.out.print("A-Fromat 3: " + Integer.toHexString(ukaz) + " "
 		//		+ v.getMnemonik() + " ");
-
+		
+		String operand = v.getOperand();
+		
 		int naslov = 0;
 
 		if (operand != null && operand.contains(",X")) {
@@ -197,14 +205,8 @@ public class Pass2 {
 			// PC-relativno
 			ukaz |= Mnemonic.BIT_P_3;
 
-			//System.out.print("PC ");
-
 			ukaz += skrajsajInt(odmik);
 
-			// System.out.println("Binary: " + Integer.toBinaryString(ukaz) +
-			// ", odmik: " + odmik + " - " + Integer.toBinaryString(odmik));
-			// System.out.println("Skrajsan odmik: " + skrajsajInt(odmik) + " "
-			// + Integer.toBinaryString(skrajsajInt(odmik)));
 		} else {
 			if (!isBase) {
 				// Napaka
@@ -214,17 +216,9 @@ public class Pass2 {
 
 			dn = simTab.getVrednostOperanda(operand);
 
-			// baseNaslov = 51;
-
-			//System.out.print("Base ");
-
 			odmik = dn - baseNaslov;
 
 			ukaz |= Mnemonic.BIT_B_3;
-
-			// System.out.println("ukaz: " + ukaz);
-
-			// System.out.println("skrajsan odmik: " + skrajsajInt(odmik));
 
 			ukaz += skrajsajInt(odmik);
 
@@ -253,7 +247,7 @@ public class Pass2 {
 				char c = s.charAt(i);
 				ret += Integer.toHexString((int) c);
 			}
-			return ret; // prvi znak in ''
+			return ret;
 		}
 		if (Character.isDigit(s.charAt(0))) {
 			return Integer.toHexString(Integer.parseInt(s));

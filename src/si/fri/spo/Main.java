@@ -4,7 +4,7 @@ import si.fri.spo.assembler.Assembler;
 import si.fri.spo.exceptions.NapakaPriPrevajanju;
 
 public class Main {
-	private static final String  VERSION = "0.2";
+	private static final String  VERSION = "0.3";
 	
 	//ce je IN_MEMORY enak true, potem ne uporablja vmesne datoteke
 	//vse se hrani v pomnilniku.
@@ -13,7 +13,7 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		System.out.println("SIC/XE Assembler " + VERSION);
+		System.out.println("SIC/XE Assembler " + VERSION + "\n Copyleft 2009 Anton Perc & Anže Cesar");
 		Assembler a = new Assembler(IN_MEMORY);
 		switch(args.length) {
 		
@@ -22,7 +22,7 @@ public class Main {
 				break;
 			case 1:
 				//Got only the input file.
-				System.out.println("Compiling your source file. If you imagine it really really hard :]");
+				System.out.println("Compiling your source file...");
 				try {
 					a.assemble(args[0]);
 				} catch (NapakaPriPrevajanju e) {
@@ -32,7 +32,7 @@ public class Main {
 				break;
 			case 2:
 				//Got input and output files.
-				System.out.println("Compiling your source file to specified output file. If you imagine it really really hard :]");
+				System.out.println("Compiling your source file to specified output file...");
 				break;
 		}
 
