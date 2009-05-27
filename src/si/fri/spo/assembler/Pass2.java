@@ -11,7 +11,7 @@ public class Pass2 {
 	int baseNaslov;
 	boolean isBase = false;
 
-	public String pass2(Vrstica v) throws NapakaPriPrevajanju {
+	public Vrstica pass2(Vrstica v) throws NapakaPriPrevajanju {
 		SimtabManager simTab = SimtabManager.getInstance();
 		MnetabManager mneTab = MnetabManager.getInstance();
 		Registers regs = Registers.getInstance();
@@ -29,19 +29,20 @@ public class Pass2 {
 			baseNaslov = simTab.getVrednostOperanda(operand);
 			// System.out.println("SET BASE: " + baseNaslov + " operand " +
 			// operand);
-			return "";
+			return v;
 		}
 
 		if ("NOBASE".equals(v.getMnemonik())) {
 			// Onemogočimo bazno relativno naslavljanje.
 			isBase = false;
-			return "";
+			return v;
 		}
 
 		if ("BYTE".equals(v.getMnemonik())) {
 			String bajt = pretvoriOperand(operand);
 			//System.out.println("BYTE: " + bajt);
-			return bajt;
+			v.setObjektnaKoda(bajt);
+			return v;
 			//todo: string in neki
 		}
 
@@ -54,7 +55,7 @@ public class Pass2 {
 			//System.out.print("A-Fromat 2: " + Integer.toHexString(ukaz) + " "
 			//		+ v.getMnemonik() + " ");
 
-			int op;
+			//int op;
 
 			if (operand.contains(",")) {
 				String[] o = operand.split(",");
@@ -74,25 +75,22 @@ public class Pass2 {
 		}
 		//System.out.println(Integer.toHexString(ukaz));
 		if(ukaz == 0)
-			return "";
-		return Integer.toHexString(ukaz);
+			return v;
+		v.setObjektnaKoda(ukaz);
+		return v;
 	}
 
 	private int obdelajFormat4(Vrstica v, SimtabManager simTab,
 			int ukaz) throws NapakaPriPrevajanju {
 		
 		String operand = v.getOperand();
-		
 		ukaz = ukaz << 8;
-
 		ukaz |= Mnemonic.BIT_E_4;
-
 		int naslov = 0;
 
 		if (operand != null && operand.contains(",X")) {
 			// indeksno
 			ukaz |= Mnemonic.BIT_X_4;
-
 			operand = operand.substring(0, operand.indexOf(","));
 
 			naslov = simTab.getVrednostOperanda(operand);
@@ -102,15 +100,20 @@ public class Pass2 {
 			ukaz += naslov;
 
 		} else if (operand != null && operand.startsWith("#")) {
-			//System.out.print("Direktno ");
+			//Direktno naslavljanje
+			
 			ukaz |= Mnemonic.BIT_I_4; // nastavi bit i na 1
-
 			naslov = simTab.getVrednostOperanda(operand.substring(1));
 
 			ukaz += naslov;
 		} else if (operand != null && !operand.startsWith("#")) {
+			//Neposredno naslavljanje
+			
 			ukaz |= Mnemonic.BIT_I_4; // nastavi bit i na 1
-			ukaz |= Mnemonic.BIT_N_4;
+			
+			if (!v.isPosrednoNaslavljanje()) {
+				ukaz |= Mnemonic.BIT_I_4;
+			}
 
 			naslov = simTab.getVrednostOperanda(operand);
 
@@ -183,9 +186,9 @@ public class Pass2 {
 			naslov = simTab.getVrednostOperanda(operand.substring(1));
 
 			if (simTab.isLabela(operand.substring(1))) {
-				int dn = simTab.getVrednostOperanda(operand.substring(1));
+				//int dn = simTab.getVrednostOperanda(operand.substring(1));
 				int pc = v.getLokSt();
-				int odmik = dn - pc;
+				int odmik = naslov - pc;
 
 				ukaz = pcAliBazno(simTab, operand, ukaz, odmik);
 			} else

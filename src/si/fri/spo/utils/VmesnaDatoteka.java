@@ -13,7 +13,7 @@ import si.fri.spo.data.Vrstica;
 public class VmesnaDatoteka {
 	private static VmesnaDatoteka m_instance;
 	
-	private static final String IME_DATOTEKE = "/tmp/objektna";
+	private static final String IME_DATOTEKE = "/tmp/vmesna";
 	
 	private boolean inMemory;
 	private List<Vrstica> vmesnaDatoteka;

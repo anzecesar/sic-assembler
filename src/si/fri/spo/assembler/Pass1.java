@@ -7,6 +7,7 @@ import si.fri.spo.utils.SimtabManager;
 
 public class Pass1 {
 	private int zacetniNaslovOP, stariLokSt;
+	private String imePrograma;
 	
 	public Vrstica pass1(Vrstica v) throws NapakaPriPrevajanju {
 		SimtabManager simTab = SimtabManager.getInstance();
@@ -16,6 +17,7 @@ public class Pass1 {
 			zacetniNaslovOP = Integer.parseInt(v.getOperand(), 16);
 			stariLokSt = zacetniNaslovOP;
 			v.setLokSt(zacetniNaslovOP);
+			imePrograma = v.getLabela();
 			return v;
 		}
 		
@@ -90,5 +92,17 @@ public class Pass1 {
 			return vred / 2 + (vred % 2);
 		}
 		return 0;
+	}
+	
+	public int getDolzina() {
+		return stariLokSt - zacetniNaslovOP;
+	}
+
+	public int getZacetniNaslovOP() {
+		return zacetniNaslovOP;
+	}
+
+	public String getImePrograma() {
+		return imePrograma;
 	}
 }

@@ -1,5 +1,8 @@
 package si.fri.spo.data;
 
+import si.fri.spo.utils.MnetabManager;
+import si.fri.spo.utils.Utils;
+
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 
 public class Vrstica {
@@ -10,6 +13,8 @@ public class Vrstica {
 	private Integer lokSt;
 	private boolean extended = false;
 	private boolean posrednoNaslavljanje = false;
+	
+	private String objektnaKoda;
 	
 	private boolean veljavna = true; //zaradi pravilnega oštevilčenja vrstic.
 	
@@ -46,6 +51,7 @@ public class Vrstica {
 		this.operand = operand;
 	}
 	
+	@Override
 	public String toString() {
 		if(!veljavna)
 			return "Vrstica je komentar/prazna.";
@@ -137,5 +143,51 @@ public class Vrstica {
 
 	public void setVeljavna(boolean veljavna) {
 		this.veljavna = veljavna;
+	}
+
+	public String getObjektnaKoda() {
+		return objektnaKoda;
+	}
+	
+	public void setObjektnaKoda(String objektnaKoda) {
+		this.objektnaKoda = objektnaKoda;
+	}
+
+	public void setObjektnaKoda(int objektnaKoda) {
+		int format = MnetabManager.getInstance().getFormat(mnemonik);
+		switch( format ) {
+			case 1:
+				this.objektnaKoda = Utils.razsiri(objektnaKoda, 2);
+			break;
+			case 2:
+				this.objektnaKoda = Utils.razsiri(objektnaKoda, 4);
+			break;
+			case 3:
+				if(!extended)
+					this.objektnaKoda = Utils.razsiri(objektnaKoda, 6);
+				else
+					this.objektnaKoda = Utils.razsiri(objektnaKoda, 8);
+			break;
+		}
+	}
+	
+	public int getNaslov() {
+		int format = MnetabManager.getInstance().getFormat(mnemonik);
+		int naslov = 0;
+		switch( format ) {
+			case 1:
+				naslov = lokSt - 1;
+			break;
+			case 2:
+				naslov = lokSt - 2;
+			break;
+			case 3:
+				if(!extended)
+					naslov = lokSt - 3;
+				else
+					naslov = lokSt - 4;
+			break;
+		}
+		return naslov;
 	}
 }

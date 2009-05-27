@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import si.fri.spo.data.Vrstica;
 import si.fri.spo.exceptions.NapakaPriPrevajanju;
+import si.fri.spo.utils.ObjektnaDatoteka;
 import si.fri.spo.utils.Parser;
 import si.fri.spo.utils.VmesnaDatoteka;
 
@@ -74,6 +75,12 @@ public class Assembler {
 				// System.out.println(" " + Integer.toHexString(stariLokSt));
 
 			}
+			System.out.println("Dolzina programa: " + p1.getDolzina());
+			
+			ObjektnaDatoteka objDat = ObjektnaDatoteka.init();
+			
+			objDat.pisiZaglavje(p1.getDolzina(), p1.getImePrograma(), p1.getZacetniNaslovOP());
+			
 			//System.out.println("Pass 2");
 			stVrstice = 0;
 			while ((v = vmes.beri()) != null) {
@@ -81,12 +88,18 @@ public class Assembler {
 				stVrstice++;
 				if (v.isVeljavna()) {
 					
-					String ukaz = p2.pass2(v);
+					v = p2.pass2(v);
 					
-					if(ukaz.length() > 0)
-						System.out.println(ukaz);
+					if(v.getObjektnaKoda() != null)
+						objDat.pisi(v.getObjektnaKoda(), v.getNaslov());
+					else if("RESB".equals(v.getMnemonik()) || "RESW".equals(v.getMnemonik())) {
+						objDat.flush(v.getNaslov());
+					}
 				}
 			}
+			
+			objDat.pisiKonecOP(p1.getZacetniNaslovOP());
+			objDat.close();
 		} catch (FileNotFoundException e) {
 			// Ce nam ne uspe odpreti datoteke...
 			e.printStackTrace();
