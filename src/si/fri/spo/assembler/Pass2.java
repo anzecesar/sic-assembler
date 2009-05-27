@@ -4,12 +4,20 @@ import si.fri.spo.data.Mnemonic;
 import si.fri.spo.data.Vrstica;
 import si.fri.spo.exceptions.NapakaPriPrevajanju;
 import si.fri.spo.utils.MnetabManager;
+import si.fri.spo.utils.ModTabManager;
 import si.fri.spo.utils.Registers;
 import si.fri.spo.utils.SimtabManager;
+import si.fri.spo.utils.Utils;
 
 public class Pass2 {
+	int zacetniNaslov;
+	
 	int baseNaslov;
 	boolean isBase = false;
+	
+	public Pass2(int zacetniNaslov) {
+		this.zacetniNaslov = zacetniNaslov;
+	}
 
 	public Vrstica pass2(Vrstica v) throws NapakaPriPrevajanju {
 		SimtabManager simTab = SimtabManager.getInstance();
@@ -96,7 +104,7 @@ public class Pass2 {
 			naslov = simTab.getVrednostOperanda(operand);
 			int pc = v.getLokSt();
 			naslov -= pc + 4;
-
+			
 			ukaz += naslov;
 
 		} else if (operand != null && operand.startsWith("#")) {
@@ -116,6 +124,12 @@ public class Pass2 {
 			}
 
 			naslov = simTab.getVrednostOperanda(operand);
+			
+			if(zacetniNaslov == 0) {
+				//relokacija
+				String mod = "M" + Utils.razsiri(v.getNaslov() + 1, 6) + "05";
+				ModTabManager.getInstance().addMod(mod);
+			}
 
 			ukaz += naslov;
 		}
@@ -189,7 +203,7 @@ public class Pass2 {
 				//int dn = simTab.getVrednostOperanda(operand.substring(1));
 				int pc = v.getLokSt();
 				int odmik = naslov - pc;
-
+				
 				ukaz = pcAliBazno(simTab, operand, ukaz, odmik);
 			} else
 				ukaz += naslov;

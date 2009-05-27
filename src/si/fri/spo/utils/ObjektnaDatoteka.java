@@ -68,7 +68,11 @@ public class ObjektnaDatoteka {
 		if(vsebina.length() > 0) {
 			flush();
 		}
+		doPisi(ModTabManager.getInstance().getAll());
+		
 		doPisi("E" + razsiri(zacetniNaslov, 6));
+		
+		newLine();
 	}
 	
 	private void flush() throws IOException {

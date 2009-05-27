@@ -49,7 +49,6 @@ public class Assembler {
 
 			VmesnaDatoteka vmes = VmesnaDatoteka.getInstance();
 
-			Pass2 p2 = new Pass2();
 			Pass1 p1 = new Pass1();
 
 			while ((vrstica = input.readLine()) != null) {
@@ -75,7 +74,9 @@ public class Assembler {
 				// System.out.println(" " + Integer.toHexString(stariLokSt));
 
 			}
-			System.out.println("Dolzina programa: " + p1.getDolzina());
+			//System.out.println("Dolzina programa: " + p1.getDolzina());
+			
+			Pass2 p2 = new Pass2(p1.getZacetniNaslovOP());
 			
 			ObjektnaDatoteka objDat = ObjektnaDatoteka.init();
 			
