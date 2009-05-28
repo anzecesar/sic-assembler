@@ -3,15 +3,16 @@ package si.fri.spo.utils;
 import java.util.HashMap;
 import java.util.Map;
 
+import si.fri.spo.data.Simbol;
 import si.fri.spo.exceptions.NapakaPriPrevajanju;
 
 public class SimtabManager {
 	private static SimtabManager m_instance;
 	
-	Map<String, Integer> simTab;
+	Map<String, Simbol> simTab;
 	
 	private SimtabManager() {
-		simTab = new HashMap<String, Integer>();
+		simTab = new HashMap<String, Simbol>();
 	}
 	
 	public static SimtabManager getInstance() {
@@ -34,8 +35,16 @@ public class SimtabManager {
 		
 		//System.out.println("Labela: " + labela + " " + lokSt + " hex " + Integer.toHexString(lokSt));
 		
-		simTab.put(labela, lokSt);
+		simTab.put(labela, new Simbol(lokSt));
 	}
+	
+	public void dodajEqu(String labela, Integer vrednost) throws NapakaPriPrevajanju {
+		if(simTab.containsKey(labela)) {
+			throw new NapakaPriPrevajanju("Napaka: Labela " + labela + " je definirana dvakrat!");
+		}
+		simTab.put(labela, new Simbol(vrednost, true));
+	}
+	
 
 	public boolean isLabela(String s) {
 		if(simTab.containsKey(s)) 
@@ -44,11 +53,21 @@ public class SimtabManager {
 			return false;
 	}
 	
+	/**
+	 * Predvideva, da je programer že klical isLabela pred tem... Sicer obnašanje ni predvidljivo :]
+	 * @param s
+	 * @return
+	 */
+	public boolean isEqu(String s) {
+		return simTab.get(s).isEqu();
+	}
+	
 	public int getLokSt(String labela) {
-		return simTab.get(labela);
+		return simTab.get(labela).getVrednost();
 	}
 	
 	public int getVrednostOperanda(String o) throws NapakaPriPrevajanju {
+		System.out.println("titut " + o);
 		if(simTab.containsKey(o)) {
 			return getLokSt(o);
 		} else {

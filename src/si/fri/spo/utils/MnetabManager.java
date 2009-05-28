@@ -98,6 +98,7 @@ public class MnetabManager {
 		mnetab.put("END", new Mnemonic(0x0, -1));
 		mnetab.put("BASE", new Mnemonic(0x0, -1));
 		mnetab.put("NOBASE", new Mnemonic(0x0, -1));
+		mnetab.put("EQU", new Mnemonic(0x0, -1));
 		
 	}
 	

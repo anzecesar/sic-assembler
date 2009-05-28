@@ -197,9 +197,11 @@ public class Pass2 {
 			//System.out.print("Direktno ");
 			ukaz |= Mnemonic.BIT_I_3; // nastavi bit i na 1
 
-			naslov = simTab.getVrednostOperanda(operand.substring(1));
-
-			if (simTab.isLabela(operand.substring(1))) {
+			operand = operand.substring(1);
+			
+			naslov = simTab.getVrednostOperanda(operand);
+			
+			if (simTab.isLabela(operand) && !simTab.isEqu(operand)) {
 				//int dn = simTab.getVrednostOperanda(operand.substring(1));
 				int pc = v.getLokSt();
 				int odmik = naslov - pc;

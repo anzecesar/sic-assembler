@@ -25,11 +25,15 @@ public class Pass1 {
 		
 		if (!"END".equals(v.getMnemonik())) {
 			String labela = v.getLabela();
-			if (labela != null) {
+			String trenutniMnemonik = v.getMnemonik();
+			
+			if("EQU".equals(trenutniMnemonik)) {
+				System.out.println("jebise");
+				simTab.dodajEqu(labela, Integer.parseInt(v.getOperand()));
+			} else if (labela != null) {
 				simTab.dodajLabelo(labela, lokSt);
 			}
 			stariLokSt = lokSt;
-			String trenutniMnemonik = v.getMnemonik();
 			// TODO: preveri vrednosti :)
 			if ("RESW".equals(trenutniMnemonik))
 				lokSt = lokSt + 3 * (pretvoriOperand(v.getOperand()));
