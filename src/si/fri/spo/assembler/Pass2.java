@@ -3,6 +3,7 @@ package si.fri.spo.assembler;
 import si.fri.spo.data.Mnemonic;
 import si.fri.spo.data.Vrstica;
 import si.fri.spo.exceptions.NapakaPriPrevajanju;
+import si.fri.spo.utils.LittabManager;
 import si.fri.spo.utils.MnetabManager;
 import si.fri.spo.utils.ModTabManager;
 import si.fri.spo.utils.Registers;
@@ -57,6 +58,10 @@ public class Pass2 {
 		if ("WORD".equals(v.getMnemonik())) {
 			
 		}
+		
+		if ("LTORG".equals(v.getMnemonik())) {
+			v.setObjektnaKoda(LittabManager.getInstance().flushLtorg());
+		}
 
 		// Format 1 je ze kar OpCode.
 		if (mneTab.getFormat(v.getMnemonik()) == 2) {
@@ -82,6 +87,12 @@ public class Pass2 {
 
 		}
 		//System.out.println(Integer.toHexString(ukaz));
+		
+		if("END".equals(v.getMnemonik())) {
+			v.setObjektnaKoda(LittabManager.getInstance().flushLtorg());
+			return v;
+		}
+		
 		if(ukaz == 0)
 			return v;
 		v.setObjektnaKoda(ukaz);
@@ -172,8 +183,15 @@ public class Pass2 {
 			// Najprej poskuša z Pc-relativnim, če je odmik, če je odmik
 			// izven meja, pa z baznim.
 
-			int dn = simTab.getVrednostOperanda(operand);
+			int dn;
 			int pc = v.getLokSt();
+			
+			if(v.isOperandJeLiteral()) {
+				dn = LittabManager.getInstance().naslovLiterala(operand);
+				System.out.println("naslov literala " + dn);
+			} else {
+				dn = simTab.getVrednostOperanda(operand);
+			}
 
 			// System.out.println(dn + " - " + pc);
 

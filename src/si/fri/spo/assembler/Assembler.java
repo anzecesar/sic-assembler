@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import si.fri.spo.data.Vrstica;
 import si.fri.spo.exceptions.NapakaPriPrevajanju;
+import si.fri.spo.utils.LittabManager;
 import si.fri.spo.utils.ObjektnaDatoteka;
 import si.fri.spo.utils.Parser;
 import si.fri.spo.utils.VmesnaDatoteka;
@@ -75,6 +76,8 @@ public class Assembler {
 
 			}
 			//System.out.println("Dolzina programa: " + p1.getDolzina());
+			
+			LittabManager.getInstance().resetirajStevec();
 			
 			Pass2 p2 = new Pass2(p1.getZacetniNaslovOP());
 			

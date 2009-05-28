@@ -67,7 +67,6 @@ public class SimtabManager {
 	}
 	
 	public int getVrednostOperanda(String o) throws NapakaPriPrevajanju {
-		System.out.println("titut " + o);
 		if(simTab.containsKey(o)) {
 			return getLokSt(o);
 		} else {

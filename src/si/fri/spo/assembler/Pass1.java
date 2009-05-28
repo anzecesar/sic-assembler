@@ -2,8 +2,10 @@ package si.fri.spo.assembler;
 
 import si.fri.spo.data.Vrstica;
 import si.fri.spo.exceptions.NapakaPriPrevajanju;
+import si.fri.spo.utils.LittabManager;
 import si.fri.spo.utils.MnetabManager;
 import si.fri.spo.utils.SimtabManager;
+import si.fri.spo.utils.Utils;
 
 public class Pass1 {
 	private int zacetniNaslovOP, stariLokSt;
@@ -28,24 +30,28 @@ public class Pass1 {
 			String trenutniMnemonik = v.getMnemonik();
 			
 			if("EQU".equals(trenutniMnemonik)) {
-				System.out.println("jebise");
 				simTab.dodajEqu(labela, Integer.parseInt(v.getOperand()));
 			} else if (labela != null) {
 				simTab.dodajLabelo(labela, lokSt);
-			}
+			} else if(v.isOperandJeLiteral())
+				LittabManager.getInstance().dodajLiteral(labela, v.getOperand());
 			stariLokSt = lokSt;
 			// TODO: preveri vrednosti :)
 			if ("RESW".equals(trenutniMnemonik))
-				lokSt = lokSt + 3 * (pretvoriOperand(v.getOperand()));
+				lokSt = lokSt + 3 * (Utils.pretvoriOperand(v.getOperand()));
 			else if ("RESB".equals(trenutniMnemonik))
-				lokSt = lokSt + pretvoriOperand(v.getOperand());
+				lokSt = lokSt + Utils.pretvoriOperand(v.getOperand());
 			else if ("BYTE".equals(trenutniMnemonik))
 				// lokst + št. bajtov v operandu
-				lokSt = lokSt + getStBajtov(v.getOperand()); // *
+				lokSt = lokSt + Utils.getStBajtov(v.getOperand()); // *
 																// (pretvoriOperand(v.getOperand()));
 			else if ("WORD".equals(trenutniMnemonik))
 				lokSt = lokSt + 3; // * (pretvoriOperand(v.getOperand()));
-			else if (mneTab.isMnemonik(trenutniMnemonik) == true) {
+			
+			else if ("LTORG".equals(trenutniMnemonik)) {
+				lokSt = LittabManager.getInstance().obdelajLtorg(lokSt);
+				
+			} else if (mneTab.isMnemonik(trenutniMnemonik) == true) {
 				if (mneTab.getFormat(trenutniMnemonik) != -1) {
 					lokSt = lokSt + mneTab.getFormat(trenutniMnemonik);
 					if (v.isExtended()) {
@@ -58,7 +64,7 @@ public class Pass1 {
 						+ trenutniMnemonik + " ni veljaven mnemonik!");
 			}
 		} else {
-			//stariLokSt = lokSt;
+			lokSt = LittabManager.getInstance().obdelajLtorg(lokSt);
 		}
 		stariLokSt = lokSt;
 		v.setLokSt(lokSt);
@@ -67,35 +73,6 @@ public class Pass1 {
 
 		return v;
 
-	}
-	
-	// pretvarja operand v neko vrednost, ki spominja na integer :) zato da
-	// lahko pozneje primerno povecamo lokSt
-	private int pretvoriOperand(String s) {
-		if (s.charAt(0) == '#')
-			return Integer.parseInt(s.substring(1));
-		if (s.charAt(0) == 'C')
-			return s.length() - 3; // prvi znak in ''
-		if (Character.isDigit(s.charAt(0)))
-			return Integer.parseInt(s);
-		if (s.startsWith("X'") && s.endsWith("'"))
-			return Integer.parseInt(s.substring(3, s.length() - 1), 16);
-		return 0;
-	}
-	
-	private int getStBajtov(String s) {
-		if (s.charAt(0) == 'C')
-			return s.length() - 3; // prvi znak in ''
-		if (Character.isDigit(s.charAt(0))) {
-			s = Integer.toHexString(Integer.parseInt(s));
-			int vred = s.length() - 3;
-			return vred / 2 + (vred % 2);
-		}
-		if (s.startsWith("X'") && s.endsWith("'")) {
-			int vred = s.length() - 3;
-			return vred / 2 + (vred % 2);
-		}
-		return 0;
 	}
 	
 	public int getDolzina() {

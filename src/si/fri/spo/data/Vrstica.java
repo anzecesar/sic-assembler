@@ -13,6 +13,7 @@ public class Vrstica {
 	private Integer lokSt;
 	private boolean extended = false;
 	private boolean posrednoNaslavljanje = false;
+	private boolean operandJeLiteral = false;
 	
 	private String objektnaKoda;
 	
@@ -46,6 +47,9 @@ public class Vrstica {
 	public void setOperand(String operand) {
 		if(operand.startsWith("@")) {
 			posrednoNaslavljanje = true;
+			operand = operand.substring(1);
+		} else if(operand.startsWith("=")) {
+			operandJeLiteral = true;
 			operand = operand.substring(1);
 		}
 		this.operand = operand;
@@ -86,7 +90,7 @@ public class Vrstica {
 		o = Base64.encode(o.getBytes());
 		
 		return l + " " + mnemonik + " " + o + " " + extended + " " + posrednoNaslavljanje + " " + lokSt
-		+ " " + veljavna;
+		+ " " + veljavna + " " + operandJeLiteral;
 	}
 	
 	public static Vrstica deserialize(String prebranaVrstica) {
@@ -113,6 +117,8 @@ public class Vrstica {
 		v.setLokSt(Integer.parseInt(stolpci[5]));
 		
 		v.setVeljavna(Boolean.getBoolean(stolpci[6]));
+		
+		v.operandJeLiteral = Boolean.parseBoolean(stolpci[7]);
 		
 		return v;
 	}
@@ -189,5 +195,9 @@ public class Vrstica {
 			break;
 		}
 		return naslov;
+	}
+
+	public boolean isOperandJeLiteral() {
+		return operandJeLiteral;
 	}
 }
