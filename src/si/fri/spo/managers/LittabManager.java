@@ -1,9 +1,10 @@
-package si.fri.spo.utils;
+package si.fri.spo.managers;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import si.fri.spo.data.Literal;
+import si.fri.spo.utils.Utils;
 
 public class LittabManager {
 
@@ -27,11 +28,9 @@ public class LittabManager {
 		l.setDolzina(Utils.getStBajtov(vrednost));
 		l.setVrednost(Utils.pretvoriOperand(vrednost));
 		littab.put(vrednost, l);
-		System.out.println("add to littab " + vrednost);
 	}
 	
 	public int naslovLiterala(String ime) {
-		System.out.println(ime);
 		return littab.get(ime).getLokacija();
 	}
 	
@@ -39,7 +38,6 @@ public class LittabManager {
 		for (Literal l : littab.values()) {
 			if(l.getLokacija() == -1) {
 				l.setLokacija(lokSt);
-				System.out.println("dolzina: " + l.getDolzina());
 				lokSt += l.getDolzina();
 				l.setLtorgDump(ltorgIter);
 			}

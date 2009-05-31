@@ -7,10 +7,10 @@ import java.io.IOException;
 
 import si.fri.spo.data.Vrstica;
 import si.fri.spo.exceptions.NapakaPriPrevajanju;
-import si.fri.spo.utils.LittabManager;
-import si.fri.spo.utils.ObjektnaDatoteka;
+import si.fri.spo.io.ObjektnaDatoteka;
+import si.fri.spo.io.VmesnaDatoteka;
+import si.fri.spo.managers.LittabManager;
 import si.fri.spo.utils.Parser;
-import si.fri.spo.utils.VmesnaDatoteka;
 
 public class Assembler {
 	public Assembler() {
@@ -20,6 +20,7 @@ public class Assembler {
 	public Assembler(boolean im) {
 		try {
 			VmesnaDatoteka.init(im);
+			ObjektnaDatoteka.init(im);
 		} catch (IOException e) {
 			System.err
 					.println("Napaka: Vmesne datoteke ni bilo mogoče odpreti!");
@@ -81,7 +82,7 @@ public class Assembler {
 			
 			Pass2 p2 = new Pass2(p1.getZacetniNaslovOP());
 			
-			ObjektnaDatoteka objDat = ObjektnaDatoteka.init();
+			ObjektnaDatoteka objDat = ObjektnaDatoteka.getInstance();
 			
 			objDat.pisiZaglavje(p1.getDolzina(), p1.getImePrograma(), p1.getZacetniNaslovOP());
 			
@@ -89,6 +90,7 @@ public class Assembler {
 			stVrstice = 0;
 			while ((v = vmes.beri()) != null) {
 				// System.out.println(v.toString());
+				vrstica = v.toString();
 				stVrstice++;
 				if (v.isVeljavna()) {
 					

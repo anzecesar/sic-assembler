@@ -2,6 +2,7 @@ package si.fri.spo.utils;
 
 import si.fri.spo.data.Vrstica;
 import si.fri.spo.exceptions.NapakaPriPrevajanju;
+import si.fri.spo.managers.MnetabManager;
 
 public class Parser {
 	private static final String REGEX = "\\s";

@@ -1,4 +1,4 @@
-package si.fri.spo.utils;
+package si.fri.spo.managers;
 
 import java.util.List;
 import java.util.Vector;

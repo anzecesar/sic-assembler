@@ -3,11 +3,11 @@ package si.fri.spo.assembler;
 import si.fri.spo.data.Mnemonic;
 import si.fri.spo.data.Vrstica;
 import si.fri.spo.exceptions.NapakaPriPrevajanju;
-import si.fri.spo.utils.LittabManager;
-import si.fri.spo.utils.MnetabManager;
-import si.fri.spo.utils.ModTabManager;
+import si.fri.spo.managers.LittabManager;
+import si.fri.spo.managers.MnetabManager;
+import si.fri.spo.managers.ModTabManager;
+import si.fri.spo.managers.SimtabManager;
 import si.fri.spo.utils.Registers;
-import si.fri.spo.utils.SimtabManager;
 import si.fri.spo.utils.Utils;
 
 public class Pass2 {
@@ -61,6 +61,7 @@ public class Pass2 {
 		
 		if ("LTORG".equals(v.getMnemonik())) {
 			v.setObjektnaKoda(LittabManager.getInstance().flushLtorg());
+			return v;
 		}
 
 		// Format 1 je ze kar OpCode.
@@ -188,7 +189,6 @@ public class Pass2 {
 			
 			if(v.isOperandJeLiteral()) {
 				dn = LittabManager.getInstance().naslovLiterala(operand);
-				System.out.println("naslov literala " + dn);
 			} else {
 				dn = simTab.getVrednostOperanda(operand);
 			}

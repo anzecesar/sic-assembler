@@ -1,4 +1,4 @@
-package si.fri.spo.utils;
+package si.fri.spo.io;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

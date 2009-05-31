@@ -1,6 +1,6 @@
 package si.fri.spo.data;
 
-import si.fri.spo.utils.MnetabManager;
+import si.fri.spo.managers.MnetabManager;
 import si.fri.spo.utils.Utils;
 
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
@@ -71,7 +71,7 @@ public class Vrstica {
 			vrstica += " [posredno naslovljen]";
 		
 		if(lokSt != null)
-			vrstica += "	(s)" + Integer.toHexString(lokSt);
+			vrstica += "	(s)" + Utils.razsiri(lokSt, 4);
 			
 		return vrstica;
 	}
@@ -114,11 +114,18 @@ public class Vrstica {
 		
 		v.posrednoNaslavljanje = Boolean.getBoolean(stolpci[4]);
 		
-		v.setLokSt(Integer.parseInt(stolpci[5]));
+		try {
+			v.setLokSt(Integer.parseInt(stolpci[5]));
+		} catch (NumberFormatException e) {
+			//Če se je zgodilo to, je v datoteki null ...
+		}
 		
-		v.setVeljavna(Boolean.getBoolean(stolpci[6]));
+		v.veljavna = Boolean.parseBoolean(stolpci[6]);
+		//System.out.println("s6: " + stolpci[6] + " >> " + v.veljavna);
 		
 		v.operandJeLiteral = Boolean.parseBoolean(stolpci[7]);
+		
+		System.out.println("deserialize: " + prebranaVrstica + " >> " + v.toString());
 		
 		return v;
 	}

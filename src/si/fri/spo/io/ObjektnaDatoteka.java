@@ -1,13 +1,19 @@
-package si.fri.spo.utils;
+package si.fri.spo.io;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import si.fri.spo.managers.ModTabManager;
+import si.fri.spo.utils.Utils;
+
 public class ObjektnaDatoteka {
 	private static final int DOLZINA_ZAPISA = 60;
 	private static final String IME_DATOTEKE = "program.obj";
 	private static ObjektnaDatoteka m_instance;
+	
+	private boolean inMemory;
+	private StringBuffer imOutput;
 	
 	private BufferedWriter writer;
 	
@@ -25,12 +31,17 @@ public class ObjektnaDatoteka {
 		return m_instance;
 	}
 	
-	public static ObjektnaDatoteka init() throws IOException {
+	public static ObjektnaDatoteka init(boolean inMemory) throws IOException {
 		if(m_instance != null)
 			return m_instance;
 		
 		m_instance = new ObjektnaDatoteka();
-		m_instance.writer = new BufferedWriter(new FileWriter(IME_DATOTEKE));
+		
+		m_instance.inMemory = inMemory;
+		if(!inMemory)
+			m_instance.writer = new BufferedWriter(new FileWriter(IME_DATOTEKE));
+		else
+			m_instance.imOutput = new StringBuffer();
 		
 		return m_instance;
 	}
@@ -47,7 +58,12 @@ public class ObjektnaDatoteka {
 		vsebina.append(what);
 	}
 	
-	private void doPisi(String what) throws IOException {		
+	private void doPisi(String what) throws IOException {
+		if(inMemory) {
+			imOutput.append(what);
+			return;
+		}
+		
 		if(writer == null) {
 			//Odpri z append = false :]
 			writer = new BufferedWriter(new FileWriter(IME_DATOTEKE, false));
@@ -56,6 +72,10 @@ public class ObjektnaDatoteka {
 	}
 	
 	public void newLine() throws IOException {
+		if(inMemory) {
+			imOutput.append("\n");
+			return;
+		}
 		writer.newLine();
 	}
 	

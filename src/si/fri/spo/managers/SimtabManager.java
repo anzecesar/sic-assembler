@@ -1,4 +1,4 @@
-package si.fri.spo.utils;
+package si.fri.spo.managers;
 
 import java.util.HashMap;
 import java.util.Map;

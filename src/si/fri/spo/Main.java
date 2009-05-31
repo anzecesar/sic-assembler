@@ -8,7 +8,7 @@ public class Main {
 	
 	//ce je IN_MEMORY enak true, potem ne uporablja vmesne datoteke
 	//vse se hrani v pomnilniku.
-	private static final boolean IN_MEMORY = true;
+	private static final boolean IN_MEMORY = false;
 	/**
 	 * @param args
 	 */

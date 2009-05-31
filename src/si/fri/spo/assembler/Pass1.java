@@ -2,9 +2,9 @@ package si.fri.spo.assembler;
 
 import si.fri.spo.data.Vrstica;
 import si.fri.spo.exceptions.NapakaPriPrevajanju;
-import si.fri.spo.utils.LittabManager;
-import si.fri.spo.utils.MnetabManager;
-import si.fri.spo.utils.SimtabManager;
+import si.fri.spo.managers.LittabManager;
+import si.fri.spo.managers.MnetabManager;
+import si.fri.spo.managers.SimtabManager;
 import si.fri.spo.utils.Utils;
 
 public class Pass1 {
@@ -69,7 +69,7 @@ public class Pass1 {
 		stariLokSt = lokSt;
 		v.setLokSt(lokSt);
 
-		System.out.println("Pass 1: " + v.getMnemonik() + " " + Integer.toHexString(v.getLokSt()));
+		//System.out.println("Pass 1: " + v.getMnemonik() + " " + Integer.toHexString(v.getLokSt()));
 
 		return v;
 
