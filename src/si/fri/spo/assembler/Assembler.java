@@ -18,6 +18,7 @@ public class Assembler {
 	}
 
 	public Assembler(boolean im) {
+		//konstruktor, nic ekstravangantnega...
 		try {
 			VmesnaDatoteka.init(im);
 			ObjektnaDatoteka.init(im);
@@ -31,15 +32,12 @@ public class Assembler {
 
 	public void assemble(String source, String destination)
 			throws NapakaPriPrevajanju {
-		doAssemble(source);
+		//Sprememba koncne datoteke se ni omogocena :]
+		assemble(source);
 
 	}
 
 	public void assemble(String source) throws NapakaPriPrevajanju {
-		assemble(source, "saf.r");
-	}
-
-	private void doAssemble(String source) throws NapakaPriPrevajanju {
 		String vrstica = "";
 		Parser p = new Parser();
 
@@ -54,58 +52,61 @@ public class Assembler {
 			Pass1 p1 = new Pass1();
 
 			while ((vrstica = input.readLine()) != null) {
+				//Beri iz datoteke, vrstico za vrstico
 				stVrstice++;
+				
+				//obdelaj vsako vrstico posebej
 				v = p.parseLine(vrstica);
 
-				// Izognimo se praznim vrsticam.
+				// Izognimo se praznim vrsticam. - ce je prazna ali komentar
 				if (v == null) {
 					v = new Vrstica();
 					v.setVeljavna(false);
 					vmes.pisi(v);
+					//Ohranimo jih zaradi porocila o napaki (da sporoci pravo vrstico)
 					continue;
 				}
-
-				// System.out.println(stVrstice);
-				// dat.dodajVrstico(v);
-
+				
+				//Izvedi dejanski prvi prehod
 				v = p1.pass1(v);
-				//lokSt = v.getLokSt();
-
+				//Pisi v vmesno datoteko
 				vmes.pisi(v);
-
-				// System.out.println(" " + Integer.toHexString(stariLokSt));
-
 			}
-			//System.out.println("Dolzina programa: " + p1.getDolzina());
 			
+			//To je potrebno zaradi pravilnega delovanja LTORG ukazov.
 			LittabManager.getInstance().resetirajStevec();
 			
+			//Incializacija drugega prehoda (potrebuje zacetni naslov - zaradi premescanja.
 			Pass2 p2 = new Pass2(p1.getZacetniNaslovOP());
 			
 			ObjektnaDatoteka objDat = ObjektnaDatoteka.getInstance();
-			
+			//Zapisi zaglavje v objektno datoteko.
 			objDat.pisiZaglavje(p1.getDolzina(), p1.getImePrograma(), p1.getZacetniNaslovOP());
 			
-			//System.out.println("Pass 2");
 			stVrstice = 0;
 			while ((v = vmes.beri()) != null) {
-				// System.out.println(v.toString());
-				vrstica = v.toString();
+				//Obdela vsako vrstico iz vmesne datoteke posebej.
+				vrstica = v.toString(); //samo zaradi porocila o napaki
 				stVrstice++;
 				if (v.isVeljavna()) {
-					
+					//Ce ni komentar ali prazna
+					//izvedi drugi prehod
 					v = p2.pass2(v);
 					
 					if(v.getObjektnaKoda() != null)
+						//Nekateri psevdoukazi ne vplivajo na objektno kodo (BASE, NOBASE)
 						objDat.pisi(v.getObjektnaKoda(), v.getNaslov());
 					else if("RESB".equals(v.getMnemonik()) || "RESW".equals(v.getMnemonik())) {
+						//Ce naletimo na RESB ali RESW, je potrebno zapisati nov ZapisOP
 						objDat.flush(v.getNaslov());
 					}
 				}
 			}
-			
+			//Na koncu napisemo se zaglavje
 			objDat.pisiKonecOP(p1.getZacetniNaslovOP());
+			//zapri datoteko + dejansko pisanje.
 			objDat.close();
+			vmes.close();
 		} catch (FileNotFoundException e) {
 			// Ce nam ne uspe odpreti datoteke...
 			e.printStackTrace();
@@ -113,6 +114,7 @@ public class Assembler {
 			// Ce pride do napake pri branju...
 			e.printStackTrace();
 		} catch (NapakaPriPrevajanju e) {
+			//Porocio o napaki
 			e.setMessage(e.getMessage() + "Št. vrstice: " + stVrstice
 					+ " (Vrstica: " + vrstica + ")\n");
 			throw (e);

@@ -22,7 +22,7 @@ public class Main {
 				break;
 			case 1:
 				//Got only the input file.
-				System.out.println("Compiling your source file...");
+				System.out.println("Assembling your source file...");
 				try {
 					a.assemble(args[0]);
 				} catch (NapakaPriPrevajanju e) {
@@ -32,7 +32,7 @@ public class Main {
 				break;
 			case 2:
 				//Got input and output files.
-				System.out.println("Compiling your source file to specified output file...");
+				System.out.println("Assembling your source file to specified output file...");
 				break;
 		}
 

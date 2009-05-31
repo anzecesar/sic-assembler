@@ -50,7 +50,6 @@ public class ObjektnaDatoteka {
 		if(vsebina.length() == 0) {
 			zacetek = "T" + razsiri(naslov, 6);
 		}
-		System.out.println("w " + what);
 		if(vsebina.length() + what.length() > DOLZINA_ZAPISA) {
 			flush(naslov);
 		}

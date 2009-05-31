@@ -59,10 +59,8 @@ public class VmesnaDatoteka {
 			writer = new BufferedWriter(new FileWriter(IME_DATOTEKE, true));
 		}
 		//pise v vmesno datoteko
-		//System.out.println(v.serialize());
 		writer.write(v.serialize());
 		writer.newLine();
-		//writer.flush();
 	}
 	
 	public Vrstica beri() throws IOException {

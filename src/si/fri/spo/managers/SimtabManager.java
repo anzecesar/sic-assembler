@@ -66,6 +66,13 @@ public class SimtabManager {
 		return simTab.get(labela).getVrednost();
 	}
 	
+	/**
+	 * Vraca numericno vrednost podanega operanda. Lahko je vrednost simbola, ali vrednost podanega
+	 * operanda, ce ne predstavlja simbola
+	 * @param o
+	 * @return
+	 * @throws NapakaPriPrevajanju
+	 */
 	public int getVrednostOperanda(String o) throws NapakaPriPrevajanju {
 		if(simTab.containsKey(o)) {
 			return getLokSt(o);

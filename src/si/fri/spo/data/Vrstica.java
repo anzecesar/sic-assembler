@@ -110,9 +110,9 @@ public class Vrstica {
 		if(!"N".equals(stolpci[2]))
 			v.setOperand(stolpci[2]);
 		
-		v.setExtended(Boolean.getBoolean(stolpci[3]));
+		v.setExtended(Boolean.parseBoolean(stolpci[3]));
 		
-		v.posrednoNaslavljanje = Boolean.getBoolean(stolpci[4]);
+		v.posrednoNaslavljanje = Boolean.parseBoolean(stolpci[4]);
 		
 		try {
 			v.setLokSt(Integer.parseInt(stolpci[5]));
@@ -121,11 +121,10 @@ public class Vrstica {
 		}
 		
 		v.veljavna = Boolean.parseBoolean(stolpci[6]);
-		//System.out.println("s6: " + stolpci[6] + " >> " + v.veljavna);
 		
 		v.operandJeLiteral = Boolean.parseBoolean(stolpci[7]);
 		
-		System.out.println("deserialize: " + prebranaVrstica + " >> " + v.toString());
+		//System.out.println("deserialize: " + prebranaVrstica + " >> " + v.toString());
 		
 		return v;
 	}

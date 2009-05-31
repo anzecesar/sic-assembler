@@ -90,16 +90,16 @@ public class MnetabManager {
 		//Naslednji ukazi so ubistvu zloraba mnetaba :]
 		//Gre za psevdo ukaze in so tu zgolj zaradi prebavljanja
 		//izvorne kode :].
-		mnetab.put("RESW", new Mnemonic(0x0, -1));
-		mnetab.put("RESB", new Mnemonic(0x0, -1));
-		mnetab.put("WORD", new Mnemonic(0x0, -1));
-		mnetab.put("BYTE", new Mnemonic(0x0, -1));
-		mnetab.put("START", new Mnemonic(0x0, -1));
-		mnetab.put("END", new Mnemonic(0x0, -1));
-		mnetab.put("BASE", new Mnemonic(0x0, -1));
-		mnetab.put("NOBASE", new Mnemonic(0x0, -1));
-		mnetab.put("EQU", new Mnemonic(0x0, -1));
-		mnetab.put("LTORG", new Mnemonic(0x0, -1));
+		mnetab.put("RESW", new Mnemonic(0xff, -1));
+		mnetab.put("RESB", new Mnemonic(0xff, -1));
+		mnetab.put("WORD", new Mnemonic(0xff, -1));
+		mnetab.put("BYTE", new Mnemonic(0xff, -1));
+		mnetab.put("START", new Mnemonic(0xff, -1));
+		mnetab.put("END", new Mnemonic(0xff, -1));
+		mnetab.put("BASE", new Mnemonic(0xff, -1));
+		mnetab.put("NOBASE", new Mnemonic(0xff, -1));
+		mnetab.put("EQU", new Mnemonic(0xff, -1));
+		mnetab.put("LTORG", new Mnemonic(0xff, -1));
 		
 	}
 	
