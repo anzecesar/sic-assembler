@@ -122,4 +122,15 @@ public class ObjektnaDatoteka {
 	private String razsiri(int stevilka, int size) {
 		return Utils.razsiri(stevilka, size);
 	}
+	
+	public String toString() {
+		System.out.println(vsebina);
+		if(inMemory)
+			return imOutput.toString();
+		return "Ni podatkov - pisanje v datoteko";
+	}
+	
+	public void clear() {
+		imOutput = new StringBuffer();
+	}
 }

@@ -52,7 +52,9 @@ public class Pass2 {
 		}
 
 		if ("WORD".equals(v.getMnemonik())) {
-			//TODO:
+			String word = pretvoriOperand(operand);
+			v.setObjektnaKoda(word);
+			return v;
 		}
 		
 		if ("LTORG".equals(v.getMnemonik())) {

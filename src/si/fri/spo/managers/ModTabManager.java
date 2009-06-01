@@ -31,5 +31,8 @@ private static ModTabManager m_instance;
 		}
 		return modifikacije;
 	}
-
+	
+	public void clear() {
+		modTab.clear();
+	}
 }

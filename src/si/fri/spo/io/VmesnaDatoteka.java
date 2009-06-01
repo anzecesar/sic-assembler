@@ -96,5 +96,7 @@ public class VmesnaDatoteka {
 			reader.close();
 			reader = null;
 		}
+		if(inMemory)
+			vmesnaDatoteka.clear();
 	}
 }

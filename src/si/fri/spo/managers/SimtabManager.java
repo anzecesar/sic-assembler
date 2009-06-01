@@ -87,5 +87,8 @@ public class SimtabManager {
 			return vred;
 		}
 	}
-
+	
+	public void clear() {
+		simTab.clear();
+	}
 }

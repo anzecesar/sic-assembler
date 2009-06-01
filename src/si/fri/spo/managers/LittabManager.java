@@ -65,4 +65,8 @@ public class LittabManager {
 		ltorgIter++;
 		return ret;
 	}
+	
+	public void clear() {
+		littab.clear();
+	}
 }

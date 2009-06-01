@@ -52,7 +52,7 @@ public class Pass1 {
 				// lokSt + št. bajtov v operandu
 				lokSt = lokSt + Utils.getStBajtov(v.getOperand());
 			else if ("WORD".equals(trenutniMnemonik))
-				lokSt = lokSt + 3; // * (pretvoriOperand(v.getOperand()));
+				lokSt = lokSt + Utils.getStBesed(v.getOperand());
 			
 			else if ("LTORG".equals(trenutniMnemonik)) {
 				//ozanci vse neoznacene literale do sedaj (v littab), da pripadajo temu ltorg ukazu
