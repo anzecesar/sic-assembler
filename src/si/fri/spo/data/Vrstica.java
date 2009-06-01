@@ -58,21 +58,28 @@ public class Vrstica {
 	@Override
 	public String toString() {
 		if(!veljavna)
-			return "Vrstica je komentar/prazna.";
+			return ".komentar";
 		String vrstica = "";
-		if(labela != null)
-			vrstica += "(l)" + labela + " ";
-		vrstica += "(m)" + mnemonik + " ";
-		if(operand != null)
-			vrstica += "(o)" + operand;
-		if(extended)
-			vrstica += " [extended]";
-		if(posrednoNaslavljanje)
-			vrstica += " [posredno naslovljen]";
 		
-		if(lokSt != null)
-			vrstica += "	(s)" + Utils.razsiri(lokSt, 4);
-			
+		vrstica += Integer.toHexString(getNaslov()) + " ";
+		
+		if(labela != null)
+			vrstica += labela + " ";
+		
+		if(extended)
+			vrstica += "+";
+		
+		vrstica += mnemonik + " ";
+		
+		if(posrednoNaslavljanje)
+			vrstica += "@";
+		
+		if(operand != null)
+			vrstica += operand + " ";
+		
+		if(objektnaKoda != null)
+			vrstica += objektnaKoda;
+		
 		return vrstica;
 	}
 	

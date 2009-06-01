@@ -127,6 +127,8 @@ public class Assembler {
 						objDat.flush(v.getNaslov());
 					}
 				}
+				//Listing:
+				System.out.println(v.toString());
 			}
 			// Na koncu napisemo se zaglavje
 			objDat.pisiKonecOP(p1.getZacetniNaslovOP());
